@@ -1,0 +1,116 @@
+{
+  "grade": 11,
+  "subject": "physics",
+  "language": "english",
+  "book_title": "Physics - Class 11 (English)",
+  "chapters": [
+    {
+      "filename": "Part_2.pdf",
+      "title": "OCONTENTSOCONTENTS",
+      "sections": [
+        {
+          "title": "OCONTENTSOCONTENTS",
+          "content": "FF FFOREWORDOREWORD v\nPPREFACE vii"
+        },
+        {
+          "title": "T CH CH T CHAPTER NINECHAPTER NINE",
+          "content": ""
+        },
+        {
+          "title": "RRAY OPTICS ANAND O O ALPTICAL I T TNSTRUMENTS",
+          "content": "99 9.19.1 Introduction 309"
+        },
+        {
+          "title": "99.2 Reflection of Light by Spherical Mirrors 310",
+          "content": ""
+        },
+        {
+          "title": "99.3 Refraction 316",
+          "content": ""
+        },
+        {
+          "title": "99.4 Total Internal Reflection 319",
+          "content": ""
+        },
+        {
+          "title": "99.5 Refraction at Spherical Surfaces and by Lenses 323",
+          "content": ""
+        },
+        {
+          "title": "99.6 Refraction through a Prism 330",
+          "content": ""
+        },
+        {
+          "title": "99.7 Dispersion by a Prism 332",
+          "content": "9 9.899.8 Some Natural Phenomena due to Sunlight 333"
+        },
+        {
+          "title": "99.9 Optical Instruments 335",
+          "content": ""
+        }
+      ],
+      "key_concepts": [
+        "Air",
+        "Amplification",
+        "Amplifier",
+        "Analyser",
+        "Answer",
+        "Aperture",
+        "Apparatus",
+        "Are",
+        "Arises",
+        "Atmosphere",
+        "Atom",
+        "Attenuation",
+        "Backwave",
+        "Ball",
+        "Bandwidth"
+      ],
+      "examples": [
+        {
+          "number": "9.3",
+          "content": "EXAMPLE 9.2"
+        },
+        {
+          "number": "9.1",
+          "content": "Example 9.1 Suppose that the lower half of the concave mirror’s\nreflecting surface in Fig. 9.5 is covered with an opaque (non-reflective)\nmaterial. What effect will this have on the image of an object placed\nin front of the mirror?\nSolution You may think that the image will now show only half of the"
+        },
+        {
+          "number": "9.2",
+          "content": "A mobile phone lies along the principal axis of a concave\nmirror, as shown in Fig. 9.7. Show by suitable diagram, the formation\nof its image. Explain why the magnification is not uniform. Will the\ndistortion of image depend on the location of the phone with respect\nto the mirror?\nFIGURE 9.7\nSolution"
+        },
+        {
+          "number": "9.3",
+          "content": "An object is placed at (i) 10 cm, (ii) 5 cm in front of a\nconcave mirror of radius of curvature 15 cm. Find the position, nature,\nand magnification of the image in each case.\nSolution\nThe focal length f = -15/2 cm = -7.5 cm\n(i)The object distance u = -10 cm. Then Eq. (9.7) gives\n.11 1\n10 7 5 v/g14/g"
+        },
+        {
+          "number": "9.4",
+          "content": "EXAMPLE 9.3(ii)The object distance u = -5 cm. Then from Eq. (9.7),\n11 1\n57 . 5 v/g14/g32/g16/g16\nor/g11 /g12.\n.57 515 cm75 5v/g117/g32 =\nThis image is formed at 15 cm behind the mirror. It is a virtual image.\nMagnification m = 15- -3(5 )v\nu/g32/g32/g16\nThe image is magnified, virtual and erect."
+        }
+      ],
+      "exercises": [
+        "3. 10.8 What is the Brewster angle for air to glass transition?",
+        "81. Is the light quantum of energy to be associated with a particle?",
+        "3. Is the material n-type or p-type?",
+        "80. What would be the value of /g80 if the minimum amplitude is zero volt?"
+      ],
+      "full_text": "--\n\nOCONTENTSOCONTENTS\nFF FFOREWORDOREWORD v\nPPREFACE vii\nT CH CH T CHAPTER NINECHAPTER NINE\nRRAY OPTICS ANAND O O ALPTICAL I T TNSTRUMENTS\n99 9.19.1 Introduction 309\n99.2 Reflection of Light by Spherical Mirrors 310\n99.3 Refraction 316\n99.4 Total Internal Reflection 319\n99.5 Refraction at Spherical Surfaces and by Lenses 323\n99.6 Refraction through a Prism 330\n99.7 Dispersion by a Prism 332\n9 9.899.8 Some Natural Phenomena due to Sunlight 333\n99.9 Optical Instruments 335\n A C R CHAPTER TEN\nWWAVAVE OP IPTICS\n110.1 Introduction 351\n110.2 Huygens Principle 353\n110.3 Refraction and reflection of plane waves using Huygens Principle 355\n11 10.410.4 Coherent and Incoherent Addition of Waves 360\n11 10.510.5 Interference of Light Waves and Young’s Experiment 362\n1 10.6110.6 Diffraction 367\n110.7 Polarisation 376\n A C EVCHAPTER ELEVEN\nDDUAL N N RATURE OF R T A O ADIATION ANAND M TATTER\n111.1 Introduction 386\n111.2 Electron Emission 387\n111.3 Photoelectric Effect 388\n1 11.4111.4 Experimental Study of Photoelectric Effect 389\n111.5 Photoelectric Effect and Wave Theory of Light 393\n111.6 Einstein’s Photoelectric Equation: Energy Quantum of Radiation 393\n111.7 Particle Nature of Light: The Photon 395\n111.8 Wave Nature of Matter 398\n111.9 Davisson and Germer Experiment 403\n\nA C R EC A R ECHAPTER TWELVECHAPTER TWELVE\nAAOMTOMS\n1212.1 Introduction 414\n1212.2 Alpha-particle Scattering and Rutherford’s Nuclear Model of Atom 415\n1212.3 Atomic Spectra 420\n1212.4 Bohr Model of the Hydrogen Atom 422\n1212.5 The Line Spectra of the Hydrogen Atom 428\n1212.6 DE Broglie’s Explanation of Bohr’s Second Postulate of Quantisation 430\n C A CHAPTER THIRTEEN\nN NNN EIUCLEIEIUCLEI\n1313.1 Introduction 438\n1313 13.213.2 Atomic Masses and Composition of Nucleus 438\n1313 13.313.3 Size of the Nucleus 441\n1313.5 Nuclear Force 445\n1313.6 Radioactivity 446\n1313.7 Nuclear Energy 451\n A RC R CHAPTER FOURTEEN\nSS IEMICONDUCTOR E E N LECTRON ICSS : MATERIALS , DEVICES AAND PSIMPLE C R UCIRCUITS\n1414.1 Introduction 467\n1414.2 Classification of Metals, Conductors and Semiconductors 468\n1414.3 Intrinsic Semiconductor 472\n1414.4 Extrinsic Semiconductor 474\n1414 14.514.5 p-n Junction 478\n14 14.61414.6 Semiconductor diode 479\n1414.7 Application of Junction Diode as a Rectifier 483\n1414.8 Special Purpose p-n Junction Diodes 485\n1414.9 Junction Transistor 490\n114.10 Digital Electronics and Logic Gates 501\n114.11 Integrated Circuits 505\n A IF NC TEECHAPTER FIFTEEN\nC CCC I OMMUNICATION I OMMUNICATION S S S SY EYSTEMSY EYSTEMS\n1515.1 Introduction 513\n1515.2 Elements of a Communication System 513\n1515.3 Basic Terminology Used in Electronic Communication Systems 515\n1515 15.415.4 Ban dwidth of Signals 517\n1515 15.515.5 Bandwidth of Transmission Medium 518\n15 15.61515.6 Propagation of Electromagnetic Waves 519\nxiv\n\n115.7 Modulation and its Necessity 522\n115.8 Amplitude Modulation 524\n115.9 Production of Amplitude Modulated Wave 525\n11 15.1015.10 Detection of Amplitude Modulated Wave 526\nA ITIO MA NADDITIONAL INFORMATION IO A IT MA NADDITIONAL INFORMATION 528\nC S A I EAPPENDICES 532\nWA SANSWERS 534\nPHY BBIBLIOGRAPHY 552\nI INDEXIINDEX 554\nxv\n\nChapter Nine\nRAY OPTICS\nAND OPTICAL\nINSTRUMENTS\n9.1 I NTRODUCTION\nNature has endowed the human eye (retina) with the sensitivity to detect\nelectromagnetic waves within a small range of the electromagnetic\nspectrum. Electromagnetic radiation belonging to this region of the\nspectrum (wavelength of about 400 nm to 750 nm) is called light. It is\nmainly through light and the sense of vision that we know and interpret\nthe world around us.\nThere are two things that we can intuitively mention about light from\ncommon experience. First, that it travels with enormous speed and second,\nthat it travels in a straight line. It took some time for people to realise that\nthe speed of light is finite and measurable. Its presently accepted value\nin vacuum is c = 2.99792458  108 m s-1. For many purposes, it suffices\nto take c = 3  108 m s-1. The speed of light in vacuum is the highest\nspeed attainable in nature.\nThe intuitive notion that light travels in a straight line seems to\ncontradict what we have learnt in Chapter 8, that light is an\nelectromagnetic wave of wavelength belonging to the visible part of the\nspectrum. How to reconcile the two facts? The answer is that the\nwavelength of light is very small compared to the size of ordinary objects\nthat we encounter commonly (generally of the order of a few cm or larger).\nIn this situation, as you will learn in Chapter 10, a light wave can be\nconsidered to travel from one point to another, along a straight line joining\n\nPhysics\n310them. The path is called a ray of light, and a bundle of such rays\nconstitutes a beam of light.\nIn this chapter, we consider the phenomena of reflection, refraction\nand dispersion of light, using the ray picture of light. Using the basic\nlaws of reflection and refraction, we shall study the image formation by\nplane and spherical reflecting and refracting surfaces. We then go on ",
+      "language": "english",
+      "extraction_metadata": {
+        "file_size_bytes": 5123066,
+        "characters_extracted": 599107,
+        "processing_time": 1751863515.5105228,
+        "language": "english"
+      }
+    }
+  ],
+  "extraction_metadata": {
+    "extraction_date": "2025-07-07 10:15:11",
+    "language": "english",
+    "total_files_found": 2,
+    "files_processed": 1,
+    "files_skipped": 0,
+    "total_characters_extracted": 599107,
+    "total_processing_time_seconds": 4.225402116775513
+  }
+}

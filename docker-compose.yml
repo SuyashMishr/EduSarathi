@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: edusarathi-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: edusarathi
+    volumes:
+      - mongodb_data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - edusarathi-network
+
+  # Backend Node.js Service
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: edusarathi-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/edusarathi
+      - AI_SERVICE_URL=http://ai-service:8000
+    depends_on:
+      - mongodb
+      - ai-service
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    networks:
+      - edusarathi-network
+
+  # AI Python Service
+  ai-service:
+    build:
+      context: .
+      dockerfile: ai/Dockerfile
+    container_name: edusarathi-ai
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app
+      - MONGODB_URI=mongodb://mongodb:27017/edusarathi
+    depends_on:
+      - mongodb
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+    networks:
+      - edusarathi-network
+
+  # Frontend React Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: edusarathi-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000/api
+      - REACT_APP_AI_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - edusarathi-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  edusarathi-network:
+    driver: bridge

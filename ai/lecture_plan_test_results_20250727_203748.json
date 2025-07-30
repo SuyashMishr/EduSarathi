@@ -1,0 +1,17 @@
+[
+  {
+    "test_case": "Physics - English",
+    "success": false,
+    "error": "'GeminiService' object has no attribute '_get_ncert_context'"
+  },
+  {
+    "test_case": "Mathematics - Hindi",
+    "success": false,
+    "error": "'GeminiService' object has no attribute '_get_ncert_context'"
+  },
+  {
+    "test_case": "Chemistry - English",
+    "success": false,
+    "error": "'GeminiService' object has no attribute '_get_ncert_context'"
+  }
+]
