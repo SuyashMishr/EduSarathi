@@ -247,4 +247,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Support
 
-For support, email support@edusarathi.com or create an issue in the repository.# EduSarathi
+For support, email suyashmisharaa983@gmail.com or create an issue in the repository.# EduSarathi
