@@ -1,0 +1,122 @@
+{
+  "curriculum_samples": {
+    "mathematics": {
+      "grade_10": {
+        "title": "Mathematics Curriculum - Grade 10",
+        "units": [
+          {
+            "title": "Real Numbers",
+            "topics": ["Rational Numbers", "Irrational Numbers", "Fundamental Theorem of Arithmetic"],
+            "duration": "3 weeks"
+          },
+          {
+            "title": "Polynomials", 
+            "topics": ["Polynomial Definition", "Zeros of Polynomial", "Division Algorithm"],
+            "duration": "4 weeks"
+          },
+          {
+            "title": "Linear Equations",
+            "topics": ["Pair of Linear Equations", "Graphical Method", "Algebraic Methods"],
+            "duration": "4 weeks"
+          },
+          {
+            "title": "Quadratic Equations",
+            "topics": ["Standard Form", "Solution Methods", "Nature of Roots"],
+            "duration": "3 weeks"
+          },
+          {
+            "title": "Coordinate Geometry",
+            "topics": ["Distance Formula", "Section Formula", "Area of Triangle"],
+            "duration": "4 weeks"
+          }
+        ]
+      }
+    },
+    "science": {
+      "grade_10": {
+        "title": "Science Curriculum - Grade 10",
+        "units": [
+          {
+            "title": "Light - Reflection and Refraction",
+            "topics": ["Laws of Reflection", "Spherical Mirrors", "Refraction of Light"],
+            "duration": "4 weeks"
+          },
+          {
+            "title": "Life Processes",
+            "topics": ["Nutrition", "Respiration", "Transportation", "Excretion"],
+            "duration": "5 weeks"
+          },
+          {
+            "title": "Acids, Bases and Salts",
+            "topics": ["Acid-Base Indicators", "pH Scale", "Salt Formation"],
+            "duration": "3 weeks"
+          }
+        ]
+      }
+    }
+  },
+  "quiz_samples": {
+    "mathematics": {
+      "polynomials": [
+        {
+          "question": "What is the degree of the polynomial 3x⁴ + 2x³ - x + 5?",
+          "options": ["A) 3", "B) 4", "C) 5", "D) 2"],
+          "correct": "B) 4",
+          "explanation": "The degree of a polynomial is the highest power of the variable, which is 4 in this case."
+        },
+        {
+          "question": "If p(x) = x² - 3x + 2, what is p(1)?",
+          "options": ["A) 0", "B) 1", "C) 2", "D) -1"],
+          "correct": "A) 0",
+          "explanation": "p(1) = 1² - 3(1) + 2 = 1 - 3 + 2 = 0"
+        }
+      ],
+      "quadratic_equations": [
+        {
+          "question": "The roots of equation x² - 5x + 6 = 0 are:",
+          "options": ["A) 2, 3", "B) 1, 6", "C) -2, -3", "D) 5, 1"],
+          "correct": "A) 2, 3",
+          "explanation": "Using factorization: x² - 5x + 6 = (x-2)(x-3) = 0, so x = 2 or x = 3"
+        }
+      ]
+    },
+    "science": {
+      "light": [
+        {
+          "question": "Which of the following is true about the image formed by a plane mirror?",
+          "options": ["A) Virtual and erect", "B) Real and inverted", "C) Virtual and inverted", "D) Real and erect"],
+          "correct": "A) Virtual and erect",
+          "explanation": "A plane mirror always forms a virtual, erect image that is laterally inverted."
+        }
+      ],
+      "life_processes": [
+        {
+          "question": "The basic unit of life is:",
+          "options": ["A) Tissue", "B) Organ", "C) Cell", "D) Organism"],
+          "correct": "C) Cell",
+          "explanation": "The cell is the fundamental structural and functional unit of all living organisms."
+        }
+      ]
+    }
+  },
+  "assessment_rubrics": {
+    "quiz_grading": {
+      "excellent": {
+        "score_range": "90-100",
+        "criteria": "Demonstrates complete understanding, accurate answers, clear explanations"
+      },
+      "good": {
+        "score_range": "80-89", 
+        "criteria": "Shows good understanding, mostly correct answers, adequate explanations"
+      },
+      "satisfactory": {
+        "score_range": "70-79",
+        "criteria": "Basic understanding evident, some correct answers, partial explanations"
+      },
+      "needs_improvement": {
+        "score_range": "60-69",
+        "criteria": "Limited understanding, few correct answers, unclear explanations"
+      }
+    }
+  }
+}
