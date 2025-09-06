@@ -10,7 +10,11 @@ echo "=================================="
 echo "📦 Checking MongoDB..."
 if ! pgrep -x "mongod" > /dev/null; then
     echo "⚠️  MongoDB not running. Starting MongoDB..."
-    brew services start mongodb-community@7.0
+    if command -v brew >/dev/null 2>&1; then
+      brew services start mongodb-community@7.0 || true
+    else
+      echo "ℹ️ Please start MongoDB manually if required."
+    fi
     sleep 3
 else
     echo "✅ MongoDB is already running"
@@ -25,6 +29,16 @@ check_port() {
         return 0
     fi
 }
+
+# Ensure Python venv for AI service
+if [ ! -d "ai/venv" ]; then
+  echo "🐍 Creating Python venv for AI service..."
+  python3 -m venv ai/venv
+fi
+source ai/venv/bin/activate
+pip install --upgrade pip >/dev/null 2>&1
+pip install -r ai/requirements.txt >/dev/null 2>&1
+deactivate
 
 # Start AI Service (Python FastAPI)
 echo ""
@@ -48,6 +62,7 @@ echo ""
 echo "🔧 Starting Backend Service (Port 5001)..."
 if check_port 5001; then
     cd backend
+    npm install >/dev/null 2>&1
     npm start &
     BACKEND_PID=$!
     echo "✅ Backend Service started (PID: $BACKEND_PID)"
@@ -64,6 +79,7 @@ echo ""
 echo "🎨 Starting Frontend Service (Port 3000)..."
 if check_port 3000; then
     cd frontend
+    npm install >/dev/null 2>&1
     npm start &
     FRONTEND_PID=$!
     echo "✅ Frontend Service started (PID: $FRONTEND_PID)"
@@ -79,15 +95,7 @@ echo "📱 Frontend:  http://localhost:3000"
 echo "🔧 Backend:   http://localhost:5001"
 echo "🤖 AI Service: http://localhost:8001"
 echo ""
-echo "📚 Available Features:"
-echo "  • Physics Class 11 Quiz Generation"
-echo "  • Curriculum Generation"
-echo "  • Answer Assessment"
-echo "  • Slide Generation"
-echo "  • Mind Maps"
-echo "  • Lecture Planning"
-echo ""
-echo "💡 To stop all services, run: ./stop-all-services.sh"
+echo "💡 Ensure OPENROUTER_API_KEY is set in your environment or .env file."
 echo "📖 For more info, check: README.md"
 
 # Keep script running to show logs

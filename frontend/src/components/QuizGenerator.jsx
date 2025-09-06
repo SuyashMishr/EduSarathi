@@ -143,8 +143,11 @@ const QuizGenerator = ({ onQuizGenerated, selectedTopic }) => {
               {...register('topic', { required: t('quiz.topic') + ' is required' })}
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              placeholder={currentLanguage === 'hi' ? 'जैसे, सरल रेखा में गति, गति के नियम, कार्य ऊर्जा और शक्ति' : 'e.g., Motion in a Straight Line, Laws of Motion, Work Energy and Power'}
-              defaultValue={currentLanguage === 'hi' ? 'सरल रेखा में गति' : 'Motion in a Straight Line'}
+              placeholder={currentLanguage === 'hi' ? 
+                'उदाहरण: गति के नियम, त्रिकोणमितीय फलन, परमाणु की संरचना, कोशिका' : 
+                'Try: Laws of Motion, Quadratic Equations, Cell Division, Photosynthesis'
+              }
+              defaultValue={selectedTopic || (currentLanguage === 'hi' ? 'गति के नियम' : 'Laws of Motion')}
             />
             {errors.topic && (
               <p className="text-red-500 text-xs mt-1">{errors.topic.message}</p>
@@ -160,10 +163,11 @@ const QuizGenerator = ({ onQuizGenerated, selectedTopic }) => {
             <select
               {...register('grade')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+              defaultValue="11"
             >
               <option value="">Select Grade</option>
-              {[1,2,3,4,5,6,7,8,9,10,11,12].map(grade => (
-                <option key={grade} value={grade}>Grade {grade}</option>
+              {[6,7,8,9,10,11,12].map(grade => (
+                <option key={grade} value={grade}>Class {grade}</option>
               ))}
             </select>
           </div>
@@ -177,7 +181,8 @@ const QuizGenerator = ({ onQuizGenerated, selectedTopic }) => {
               type="number"
               min="1"
               max="10"
-              defaultValue="3"
+              defaultValue="5"
+              placeholder="3-8 questions recommended"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
@@ -189,7 +194,7 @@ const QuizGenerator = ({ onQuizGenerated, selectedTopic }) => {
             <select
               {...register('difficulty')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-              defaultValue="easy"
+              defaultValue="medium"
             >
               <option value="easy">Easy</option>
               <option value="medium">Medium</option>

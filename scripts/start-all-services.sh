@@ -79,8 +79,8 @@ pip install -r requirements.txt
 cd ..
 
 # Set environment variables for AI service
-export GEMINI_API_KEY="AIzaSyB1_kmBdinFeeFAKAgjUpDsjYko_pSOOGs"
-export GOOGLE_AI_API_KEY="AIzaSyB1_kmBdinFeeFAKAgjUpDsjYko_pSOOGs"
+export GEMINI_API_KEY="AIzaSyBag4p-exEulPp3znM2A7MegvH3_FhCxxY"
+export GOOGLE_AI_API_KEY="AIzaSyBag4p-exEulPp3znM2A7MegvH3_FhCxxY"
 export ENVIRONMENT="development"
 
 # Start services

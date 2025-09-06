@@ -1,6 +1,6 @@
-# 🎓 EduSarathi - AI-Powered Educational Platform
+# 🎓 EduSarathi - AI-Powered Educational Companion
 
-**EduSarathi** is an intelligent educational companion that leverages Google's Gemini AI to create curricula, quizzes, assessments, and learning materials. Currently optimized for **Physics Class 11** with NCERT content extraction.
+EduSarathi is an intelligent educational companion that leverages Google's Gemini AI to create curricula, quizzes, assessments, and learning materials. Currently optimized for Physics Class 11 with NCERT content extraction.
 
 ## ✨ Features
 
@@ -40,105 +40,118 @@ cd EduSarathi
 
 ### 2. Start All Services (Recommended)
 ```bash
+# Make the script executable once
+chmod +x start-all-services.sh
+
+# Start all services
 ./start-all-services.sh
 ```
 
 This will automatically:
-- ✅ Start MongoDB (if not running)
+- ✅ Check and start MongoDB (if needed)
 - ✅ Launch AI Service (Port 8001)
 - ✅ Launch Backend API (Port 5001)
 - ✅ Launch Frontend (Port 3000)
 
-### 3. Access the Application
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:5001
-- **AI Service**: http://localhost:8001
+### 3. Alternative: Start Services Individually
 
-## 🛠️ Tech Stack
+Backend
+```bash
+cd backend
+npm start
+# Runs on http://localhost:5001
+```
+
+Frontend
+```bash
+cd frontend
+npm start
+# Runs on http://localhost:3000
+```
+
+AI Service
+```bash
+cd ai
+python api_service.py
+# Runs on http://localhost:8001
+```
+
+### 4. Access the Application
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5001
+- AI Service: http://localhost:8001
+
+## 🛠️ Technology Stack
 
 ### Backend
 - **Node.js** with Express.js
 - **MongoDB** with Mongoose ODM
 - **JWT** for authentication
 - **Multer** for file uploads
+- **CORS** for cross-origin requests
 
 ### Frontend
 - **React.js** with modern hooks
 - **Tailwind CSS** for styling
 - **Axios** for API calls
-- **React Query** for state management
+- **Responsive design** for all devices
 
 ### AI Services
 - **Python** with FastAPI
 - **Google Gemini AI** for content generation
+- **OpenRouter API** for AI model access
 - **PyPDF2** for PDF text extraction
 - **NCERT Content** extracted and structured
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 EduSarathi/
-├── backend/                 # Node.js Backend
+├── backend/                 # Node.js Backend API
+│   ├── controllers/         # Route controllers
+│   ├── models/             # MongoDB models
+│   ├── routes/             # API routes
+│   └── utils/              # Utility functions
 ├── frontend/               # React Frontend
+│   ├── public/             # Static files
+│   └── src/                # React components
 ├── ai/                     # Python AI Services
-├── notebooks/              # Jupyter Notebooks
-├── models/                 # AI Models
-├── data/                   # Datasets
-└── docker-compose.yml      # Docker configuration
+│   ├── enhanced_*.py       # Enhanced AI modules
+│   ├── api_service.py      # Main AI API service
+│   ├── config.py           # Configuration
+│   └── requirements.txt    # Python dependencies
+├── data/                   # Educational datasets
+├── models/                 # AI model configurations
+├── scripts/                # Build and deployment scripts
+└── start-all-services.sh   # Main startup script
 ```
 
-## Quick Start
+## 🚀 Installation & Setup
 
 ### Prerequisites
-- Node.js (v18+)
-- Python (v3.9+)
-- MongoDB
-- Docker (optional)
+- Node.js (v16+)
+- Python (v3.8+)
+- MongoDB (local or cloud)
 
-### Installation
-
-1. **Clone the repository**
+### 1. Clone Repository
 ```bash
 git clone <repository-url>
 cd EduSarathi
 ```
 
-2. **Install dependencies**
-```bash
-# Install Node.js dependencies
-npm run install-all
-
-# Install Python dependencies
-pip install -r requirements.txt
-```
-
-3. **Environment Setup**
+### 2. Environment Setup
 ```bash
 cp .env.example .env
-# Edit .env with your configuration
+# Edit .env with your configuration (MongoDB URI, API keys, etc.)
 ```
 
-4. **Start the services**
-
-**Option 1: Using npm scripts**
+### 3. Install Dependencies
 ```bash
-# Start both frontend and backend
-npm run dev-all
+# Install Node.js dependencies for backend and frontend
+npm run install-all
 
-# Or start individually
-npm run backend    # Backend on port 5000
-npm run frontend   # Frontend on port 3000
-```
-
-**Option 2: Using Docker**
-```bash
-docker-compose up -d
-```
-
-5. **Start AI Service**
-```bash
-cd ai
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+# Install Python AI service dependencies
+pip install -r ai/requirements.txt
 ```
 
 ## API Endpoints
@@ -200,51 +213,59 @@ const response = await fetch('/api/quiz/generate', {
 });
 ```
 
-## Development
+## 🎯 Development
 
 ### Backend Development
 ```bash
 cd backend
-npm run dev
+npm run dev  # Uses nodemon for auto-restart
 ```
 
 ### Frontend Development
 ```bash
 cd frontend
-npm start
+npm start    # Runs development server with hot reload
 ```
 
 ### AI Service Development
 ```bash
 cd ai
-uvicorn main:app --reload
+python api_service.py  # Direct Python execution
 ```
 
-## Testing
+## 📊 Available Scripts
 
-```bash
-# Backend tests
-npm test
+### Root Level
+- `npm start` - Start backend server
+- `npm run dev` - Start backend with nodemon
+- `npm run install-all` - Install all dependencies
+- `npm run dev-all` - Start both frontend and backend concurrently
 
-# Frontend tests
-cd frontend && npm test
+### Startup Scripts
+- `./start-all-services.sh` - Complete platform startup
+- `./start-project.sh` - Alternative startup script
 
-# AI service tests
-cd ai && python -m pytest
-```
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## License
+## 🆘 Support & Troubleshooting
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+### Common Issues
+- MongoDB Connection: Ensure MongoDB is running locally or check your MONGODB_URI
+- AI Service: Verify your API keys are properly set in .env file
+- Port Conflicts: Default ports are 3000 (frontend), 5001 (backend), 8001 (AI)
 
-## Support
+### Getting Help
+- For support, email suyashmisharaa983@gmail.com or create an issue in the repository.
+- Check the logs in your terminal for specific error messages
+- Ensure all dependencies are properly installed
 
-For support, email suyashmisharaa983@gmail.com or create an issue in the repository.# EduSarathi
+---
+
+Made with ❤️ for education
+For support, email support@edusarathi.com or create an issue in the repository.# EduSarathi

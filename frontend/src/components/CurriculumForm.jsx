@@ -63,7 +63,7 @@ const CurriculumForm = ({ onCurriculumGenerated }) => {
               {...register('subject', { required: 'Subject is required' })}
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g., Physics (recommended), Mathematics, Science"
+              placeholder="Try: Physics (NCERT available), Chemistry, Mathematics, Biology"
               defaultValue="Physics"
             />
             {errors.subject && (
@@ -100,6 +100,7 @@ const CurriculumForm = ({ onCurriculumGenerated }) => {
           <select
             {...register('board')}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            defaultValue="CBSE"
           >
             <option value="">Select Board</option>
             <option value="CBSE">CBSE</option>

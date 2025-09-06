@@ -74,12 +74,20 @@ const LecturePlanner = ({ onPlanGenerated }) => {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Subject *
             </label>
-            <input
+            <select
               {...register('subject', { required: 'Subject is required' })}
-              type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-              placeholder="e.g., Mathematics, Science"
-            />
+              defaultValue="Physics"
+            >
+              <option value="">Select Subject</option>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Biology">Biology</option>
+              <option value="Economics">Economics</option>
+              <option value="History">History</option>
+              <option value="English">English</option>
+            </select>
             {errors.subject && (
               <p className="text-red-500 text-xs mt-1">{errors.subject.message}</p>
             )}
@@ -93,7 +101,7 @@ const LecturePlanner = ({ onPlanGenerated }) => {
               {...register('topic', { required: 'Topic is required' })}
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-              placeholder="e.g., Algebra, Photosynthesis"
+              placeholder="Try: Laws of Motion, Chemical Bonding, Quadratic Equations, Cell Division, Market Structures"
             />
             {errors.topic && (
               <p className="text-red-500 text-xs mt-1">{errors.topic.message}</p>
@@ -109,6 +117,7 @@ const LecturePlanner = ({ onPlanGenerated }) => {
             <select
               {...register('grade', { required: 'Grade is required' })}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              defaultValue="11"
             >
               <option value="">Select Grade</option>
               {[1,2,3,4,5,6,7,8,9,10,11,12].map(grade => (
@@ -141,6 +150,7 @@ const LecturePlanner = ({ onPlanGenerated }) => {
             <select
               {...register('difficulty')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              defaultValue="intermediate"
             >
               <option value="beginner">Beginner</option>
               <option value="intermediate">Intermediate</option>
@@ -157,7 +167,7 @@ const LecturePlanner = ({ onPlanGenerated }) => {
             {...register('learningObjectives')}
             rows="3"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
-            placeholder="What should students learn from this lecture?"
+            placeholder="Example: Students will understand Newton's laws of motion and apply them to solve real-world physics problems"
           />
         </div>
 

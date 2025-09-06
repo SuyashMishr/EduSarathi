@@ -52,6 +52,12 @@ const AnswerUploader = ({ onUploadComplete }) => {
         <h2 className="text-xl font-semibold text-gray-800">Upload Answer Sheet</h2>
       </div>
 
+      <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+        <p className="text-purple-800 text-sm">
+          <strong>Demo Tip:</strong> First generate a quiz to get its ID, then upload handwritten answers for AI-powered assessment and detailed feedback.
+        </p>
+      </div>
+
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -62,7 +68,7 @@ const AnswerUploader = ({ onUploadComplete }) => {
             value={quizId}
             onChange={(e) => setQuizId(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-            placeholder="Enter quiz ID"
+            placeholder="Try: QUIZ_123, PHYSICS_LAWS_001, or generate a quiz first"
           />
         </div>
 

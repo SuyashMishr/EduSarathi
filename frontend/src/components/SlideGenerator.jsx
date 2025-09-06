@@ -35,12 +35,20 @@ const SlideGenerator = ({ onSlidesGenerated }) => {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Subject *
             </label>
-            <input
+            <select
               {...register('subject', { required: 'Subject is required' })}
-              type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="e.g., Mathematics, Science"
-            />
+              defaultValue="Physics"
+            >
+              <option value="">Select Subject</option>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Biology">Biology</option>
+              <option value="Economics">Economics</option>
+              <option value="History">History</option>
+              <option value="English">English</option>
+            </select>
             {errors.subject && (
               <p className="text-red-500 text-xs mt-1">{errors.subject.message}</p>
             )}
@@ -54,7 +62,8 @@ const SlideGenerator = ({ onSlidesGenerated }) => {
               {...register('topic', { required: 'Topic is required' })}
               type="text"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="e.g., Algebra, Photosynthesis"
+              placeholder="Try: Laws of Motion, Mughal Empire, Cell Division, Photosynthesis"
+              defaultValue="Laws of Motion"
             />
             {errors.topic && (
               <p className="text-red-500 text-xs mt-1">{errors.topic.message}</p>
@@ -70,10 +79,11 @@ const SlideGenerator = ({ onSlidesGenerated }) => {
             <select
               {...register('grade')}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+              defaultValue="11"
             >
               <option value="">Select Grade</option>
-              {[1,2,3,4,5,6,7,8,9,10,11,12].map(grade => (
-                <option key={grade} value={grade}>Grade {grade}</option>
+              {[6,7,8,9,10,11,12].map(grade => (
+                <option key={grade} value={grade}>Class {grade}</option>
               ))}
             </select>
           </div>
@@ -86,8 +96,9 @@ const SlideGenerator = ({ onSlidesGenerated }) => {
               {...register('slideCount')}
               type="number"
               min="5"
-              max="30"
-              defaultValue="10"
+              max="20"
+              defaultValue="8"
+              placeholder="5-15 slides recommended"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
