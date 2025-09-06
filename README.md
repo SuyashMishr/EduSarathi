@@ -1,6 +1,6 @@
 # 🎓 EduSarathi - AI-Powered Educational Companion
 
-EduSarathi is an intelligent educational companion that leverages Google's Gemini AI to create curricula, quizzes, assessments, and learning materials. Currently optimized for Physics Class 11 with NCERT content extraction.
+EduSarathi is an intelligent educational companion that leverages OpenRouter-hosted models to create curricula, quizzes, assessments, and learning materials. Currently optimized for Physics Class 11 with NCERT content extraction.
 
 ## ✨ Features
 
@@ -98,7 +98,7 @@ python api_service.py
 
 ### AI Services
 - **Python** with FastAPI
-- **Google Gemini AI** for content generation
+- **OpenRouter models** for content generation
 - **OpenRouter API** for AI model access
 - **PyPDF2** for PDF text extraction
 - **NCERT Content** extracted and structured

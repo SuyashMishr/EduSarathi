@@ -1,7 +1,7 @@
 const logger = require('../utils/logger');
 const axios = require('axios');
 
-// Translate text using Gemini API for Hindi-English translation
+// Translate text using AI service (OpenRouter-backed)
 const translateText = async (req, res) => {
   try {
     const {
@@ -31,67 +31,10 @@ const translateText = async (req, res) => {
       });
     }
 
-    // For Hindi-English translation, use Gemini API
-    if ((sourceLanguage === 'en' && targetLanguage === 'hi') ||
-        (sourceLanguage === 'hi' && targetLanguage === 'en') ||
-        (sourceLanguage === 'english' && targetLanguage === 'hindi') ||
-        (sourceLanguage === 'hindi' && targetLanguage === 'english')) {
+  // Use AI service translation endpoint
+  logger.info(`Translating text from ${sourceLanguage} to ${targetLanguage} using AI service`);
 
-      logger.info(`Translating text from ${sourceLanguage} to ${targetLanguage} using Gemini`);
-
-      try {
-        // Call Gemini service for translation
-        const translationResponse = await axios.post(`${process.env.AI_SERVICE_URL}/translate/gemini`, {
-          text,
-          sourceLanguage,
-          targetLanguage,
-          domain
-        }, {
-          timeout: parseInt(process.env.AI_SERVICE_TIMEOUT) || 30000
-        });
-
-        const translationResult = translationResponse.data;
-
-        return res.status(200).json({
-          success: true,
-          message: 'Text translated successfully using Gemini',
-          data: {
-            originalText: text,
-            translatedText: translationResult.data.translatedText,
-            sourceLanguage,
-            targetLanguage,
-            confidence: translationResult.data.confidence || 0.95,
-            processingTime: translationResult.data.processingTime || 0,
-            method: 'gemini'
-          }
-        });
-
-      } catch (geminiError) {
-        logger.error('Gemini translation failed, falling back to simple translation:', geminiError.message);
-
-        // Simple fallback for basic translations
-        const fallbackTranslation = await performFallbackTranslation(text, sourceLanguage, targetLanguage);
-
-        return res.status(200).json({
-          success: true,
-          message: 'Text translated using fallback method',
-          data: {
-            originalText: text,
-            translatedText: fallbackTranslation,
-            sourceLanguage,
-            targetLanguage,
-            confidence: 0.7,
-            processingTime: 0,
-            method: 'fallback'
-          }
-        });
-      }
-    }
-
-    // For other language pairs, use the original Bhashini API approach
-    logger.info(`Translating text from ${sourceLanguage} to ${targetLanguage} using Bhashini`);
-
-    const translationResponse = await axios.post(`${process.env.AI_SERVICE_URL}/translate`, {
+  const translationResponse = await axios.post(`${process.env.AI_SERVICE_URL}/translate`, {
       text,
       sourceLanguage,
       targetLanguage,
@@ -112,7 +55,7 @@ const translateText = async (req, res) => {
         targetLanguage,
         confidence: translationResult.confidence || 0.9,
         processingTime: translationResult.processingTime || 0,
-        method: 'bhashini'
+  method: 'ai-service'
       }
     });
 

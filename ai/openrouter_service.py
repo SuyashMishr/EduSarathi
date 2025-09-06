@@ -19,7 +19,10 @@ class OpenRouterService:
     """Enhanced OpenRouter service with superior educational content generation"""
     
     def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
-        self.api_key = api_key or "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"
+        # Read from env if not provided; avoid hardcoded secrets
+        self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
+        if not self.api_key:
+            raise ValueError("OPENROUTER_API_KEY is required for OpenRouterService")
         self.default_model = model  # Store default model if provided
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
         self.headers = {
@@ -43,7 +46,6 @@ class OpenRouterService:
             "deepseek/deepseek-chat-v3.1:free",
             "meta-llama/llama-3.2-3b-instruct:free", 
             "google/gemma-2-9b-it:free",
-            "google/gemini-2.5-flash-image-preview:free",
             "openai/gpt-oss-120b:free"
         ]
         
@@ -52,12 +54,12 @@ class OpenRouterService:
             "quiz": "deepseek/deepseek-chat-v3.1:free",
             "curriculum": "meta-llama/llama-3.2-3b-instruct:free",
             "grading": "google/gemma-2-9b-it:free",
-            "content": "google/gemini-2.5-flash-image-preview:free",
+            "content": "meta-llama/llama-3.2-3b-instruct:free",
             "slides": "openai/gpt-oss-120b:free",
             "mindmap": "deepseek/deepseek-chat-v3.1:free",
             "lecture_plan": "meta-llama/llama-3.2-3b-instruct:free",
             "assessment": "google/gemma-2-9b-it:free",
-            "translation": "google/gemini-2.5-flash-image-preview:free"
+            "translation": "google/gemma-2-9b-it:free"
         }
         
         # Educational expertise contexts

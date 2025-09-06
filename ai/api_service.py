@@ -43,8 +43,6 @@ app.add_middleware(
 
 # Initialize services
 config = get_config()
-# Remove Gemini usage per user request
-# gemini_service = GeminiService()
 openrouter_service = OpenRouterService()  # Primary AI service
 
 # Initialize enhanced modules with OpenRouter
@@ -393,11 +391,7 @@ async def generate_mindmap(request: MindmapGenerationRequest):
             message="Unable to generate mindmap. Please try again."
         )
     try:
-        logger.info(f"Generating enhanced quiz for {request.subject} - {request.topic} using OpenRouter only")
-        result = openrouter_service.generate_quiz(request.model_dump())
-        if result["success"]:
-            return APIResponse(success=True, data=result["data"], message="Quiz generated successfully (OpenRouter)")
-        else:
+        # redundant leftover block removed
             raise HTTPException(status_code=500, detail=f"Quiz generation failed: {result.get('error', 'Unknown error')}")
     except Exception as e:
         logger.error(f"Error in quiz generation: {e}")
@@ -477,7 +471,7 @@ async def generate_slides(request: SlideGenerationRequest):
         logger.error(f"Error in slide generation: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# Remove Gemini-specific endpoints and health checks
+# System status endpoint
 @app.get("/system/status")
 async def get_system_status():
     try:

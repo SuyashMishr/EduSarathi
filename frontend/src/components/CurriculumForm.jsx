@@ -17,16 +17,8 @@ const CurriculumForm = ({ onCurriculumGenerated }) => {
     setGeneratedCurriculum(null);
     
     try {
-      // Try Gemini API first
-      let response;
-      try {
-        response = await axios.post('/api/gemini/curriculum/generate', data);
-        toast.success('Curriculum generated successfully with Gemini AI!');
-      } catch (geminiError) {
-        console.warn('Gemini API failed, falling back to legacy API:', geminiError);
-        response = await axios.post('/api/curriculum/generate', data);
-        toast.success('Curriculum generated successfully!');
-      }
+      const response = await axios.post('/api/curriculum/generate', data);
+      toast.success('Curriculum generated successfully!');
       
       const curriculumData = response.data.data || response.data;
       setGeneratedCurriculum(curriculumData);

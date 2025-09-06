@@ -48,7 +48,7 @@ const QuickTest = () => {
       // Test 3: Quiz Generation (only if AI service is working)
       if (testResults.aiService.status === 'success') {
         try {
-          const quizResponse = await axios.post('/api/gemini/quiz/generate', {
+          const quizResponse = await axios.post('/api/quiz/generate', {
             subject: 'Physics',
             topic: 'Motion in a Straight Line',
             grade: 11,

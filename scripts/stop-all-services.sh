@@ -45,14 +45,14 @@ stop_service_by_port() {
 # Stop services by PID files first
 stop_service_by_pid "Frontend-Service"
 stop_service_by_pid "Backend-Service"
-stop_service_by_pid "Gemini-AI-Service"
+stop_service_by_pid "AI-Service"
 
 # Stop services by ports as backup
 echo ""
 echo "🔍 Checking for remaining services on ports..."
 stop_service_by_port "Frontend" 3000
 stop_service_by_port "Backend" 5000
-stop_service_by_port "Gemini-AI" 8001
+stop_service_by_port "AI-Service" 8001
 
 # Stop any remaining Node.js processes related to the project
 echo ""

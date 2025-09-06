@@ -27,11 +27,11 @@ const generateQuiz = async (req, res) => {
 
     logger.info(`Generating quiz for ${subject} - ${topic}`);
 
-    // Call Gemini AI service to generate quiz (primary)
+    // Call AI service (OpenRouter-backed) to generate quiz
     let aiResponse;
     try {
-      const geminiServiceUrl = process.env.GEMINI_SERVICE_URL || 'http://localhost:8001';
-      aiResponse = await axios.post(`${geminiServiceUrl}/quiz/generate`, {
+      const aiServiceUrl = process.env.AI_SERVICE_URL || 'http://localhost:8001';
+      aiResponse = await axios.post(`${aiServiceUrl}/quiz/generate`, {
         subject,
         topic,
         grade: parseInt(grade),
@@ -40,23 +40,12 @@ const generateQuiz = async (req, res) => {
         difficulty,
         language
       }, {
-        timeout: parseInt(process.env.GEMINI_SERVICE_TIMEOUT) || 60000
+        timeout: parseInt(process.env.AI_SERVICE_TIMEOUT) || 60000
       });
-    } catch (geminiError) {
-      logger.warn('Gemini service unavailable, falling back to legacy AI service:', geminiError.message);
+    } catch (aiError) {
+      logger.warn('Primary AI service unavailable:', aiError.message);
       
-      // Fallback to legacy AI service
-      aiResponse = await axios.post(`${process.env.AI_SERVICE_URL}/quiz/generate`, {
-        subject,
-        topic,
-        grade,
-        questionCount,
-        questionTypes,
-        difficulty,
-        language
-      }, {
-        timeout: parseInt(process.env.AI_SERVICE_TIMEOUT) || 30000
-      });
+      throw aiError;
     }
 
     const generatedQuiz = aiResponse.data.success ? aiResponse.data.data : aiResponse.data;
@@ -83,10 +72,10 @@ const generateQuiz = async (req, res) => {
       createdBy: req.user?.id || '000000000000000000000000',
       metadata: {
         aiGenerated: true,
-        model: generatedQuiz.model || aiResponse.data.model || 'gemini-1.5-flash',
+  model: generatedQuiz.model || aiResponse.data.model || 'openrouter-default',
         generationTime: generatedQuiz.generationTime || 0,
-        ncertAligned: generatedQuiz.ncert_alignment || aiResponse.data.ncert_aligned || false,
-        aiService: aiResponse.data.model ? 'gemini' : 'legacy'
+  ncertAligned: generatedQuiz.ncert_alignment || aiResponse.data.ncert_aligned || false,
+  aiService: 'openrouter'
       }
     });
 

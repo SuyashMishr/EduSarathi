@@ -6,6 +6,20 @@
 echo "🚀 Starting EduSarathi Platform..."
 echo "=================================="
 
+# Load .env (if present) and require OPENROUTER_API_KEY
+if [ -f ".env" ]; then
+    set -a
+    # shellcheck disable=SC1091
+    . ".env"
+    set +a
+fi
+
+if [ -z "${OPENROUTER_API_KEY:-}" ]; then
+    echo "❌ OPENROUTER_API_KEY is not set."
+    echo "   Set it in your environment or in .env, then re-run this script."
+    exit 1
+fi
+
 # Check if MongoDB is running
 echo "📦 Checking MongoDB..."
 if ! pgrep -x "mongod" > /dev/null; then

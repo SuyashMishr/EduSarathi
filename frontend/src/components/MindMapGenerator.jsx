@@ -88,16 +88,9 @@ const MindMapGenerator = ({ onMindMapGenerated }) => {
         return;
       }
       
-      // Regular API call for other topics
-      let response;
-      try {
-        response = await axios.post('/api/gemini/mindmap/generate', data);
-        toast.success('Mind map generated successfully with Gemini AI!');
-      } catch (geminiError) {
-        console.warn('Gemini API failed, falling back to legacy API:', geminiError);
-        response = await axios.post('/api/mindmap/generate', data);
-        toast.success('Mind map generated successfully!');
-      }
+  // Regular API call for other topics
+  const response = await axios.post('/api/mindmap/generate', data);
+  toast.success('Mind map generated successfully!');
       
       const mindMapData = response.data.data || response.data;
       setGeneratedMindMap(mindMapData);

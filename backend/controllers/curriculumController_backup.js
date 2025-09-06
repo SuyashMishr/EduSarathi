@@ -44,11 +44,11 @@ const generateCurriculum = async (req, res) => {
     let serviceUsed = 'unknown';
     
     try {
-      // Primary: Enhanced OpenRouter service via Gemini endpoint
-      const geminiServiceUrl = process.env.GEMINI_SERVICE_URL || 'http://localhost:8001';
-      logger.info(`Attempting primary AI service at ${geminiServiceUrl}`);
+      // Primary: OpenRouter-backed AI service
+      const aiServiceUrl = process.env.AI_SERVICE_URL || 'http://localhost:8001';
+      logger.info(`Attempting primary AI service at ${aiServiceUrl}`);
       
-      aiResponse = await axios.post(`${geminiServiceUrl}/curriculum/generate`, {
+      aiResponse = await axios.post(`${aiServiceUrl}/curriculum/generate`, {
         subject,
         grade: gradeNum,
         duration,
@@ -60,64 +60,41 @@ const generateCurriculum = async (req, res) => {
         ncert_alignment: true,
         pedagogical_design: true
       }, {
-        timeout: parseInt(process.env.GEMINI_SERVICE_TIMEOUT) || 90000,
+        timeout: parseInt(process.env.AI_SERVICE_TIMEOUT) || 90000,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         }
       });
       
-      serviceUsed = 'enhanced-openrouter-primary';
+      serviceUsed = 'openrouter-primary';
       logger.info('Successfully used enhanced OpenRouter service');
       
-    } catch (geminiError) {
-      logger.warn('Primary AI service unavailable, trying secondary service:', geminiError.message);
+    } catch (aiError) {
+      logger.warn('Primary AI service unavailable:', aiError.message);
       
-      try {
-        // Secondary: Legacy AI service with enhanced parameters
-        const legacyServiceUrl = process.env.AI_SERVICE_URL || 'http://localhost:8001';
-        aiResponse = await axios.post(`${legacyServiceUrl}/curriculum/generate`, {
-          subject,
-          grade: gradeNum,
-          duration,
-          topics: topics || [],
-          learningObjectives: learningObjectives || [],
-          difficulty,
-          language,
-          enhanced_mode: true
-        }, {
-          timeout: parseInt(process.env.AI_SERVICE_TIMEOUT) || 60000
-        });
-        
-        serviceUsed = 'legacy-ai-secondary';
-        logger.info('Successfully used legacy AI service');
-        
-      } catch (legacyError) {
-        logger.warn('Secondary AI service also unavailable, using enhanced fallback:', legacyError.message);
-        
-        // Enhanced fallback: Superior mock curriculum with educational expertise
-        const enhancedMockCurriculum = generateEnhancedMockCurriculum(
-          subject, gradeNum, duration, topics, learningObjectives, difficulty
-        );
-        
-        aiResponse = {
-          data: {
-            success: true,
-            data: enhancedMockCurriculum,
-            service: 'enhanced-educational-fallback',
-            quality_score: 0.9,
-            features: [
-              'NCERT alignment', 
-              'Pedagogical design',
-              'Comprehensive assessment',
-              'Accessibility features'
-            ]
-          }
-        };
-        
-        serviceUsed = 'enhanced-educational-fallback';
-        logger.info('Using enhanced educational fallback system');
-      }
+      // Enhanced fallback: Superior mock curriculum with educational expertise
+      const enhancedMockCurriculum = generateEnhancedMockCurriculum(
+        subject, gradeNum, duration, topics, learningObjectives, difficulty
+      );
+      
+      aiResponse = {
+        data: {
+          success: true,
+          data: enhancedMockCurriculum,
+          service: 'enhanced-educational-fallback',
+          quality_score: 0.9,
+          features: [
+            'NCERT alignment', 
+            'Pedagogical design',
+            'Comprehensive assessment',
+            'Accessibility features'
+          ]
+        }
+      };
+      
+      serviceUsed = 'enhanced-educational-fallback';
+      logger.info('Using enhanced educational fallback system');
     }
 
     // Enhanced response processing

@@ -66,7 +66,7 @@ const LoadingPlaceholder = ({ contentType, grade, subject, topic }) => {
         return [
           `🔍 Analyzing NCERT Class ${grade} ${subject} curriculum...`,
           `📚 Extracting content from "${topic}" chapter...`,
-          `🧠 Generating NCERT-aligned questions using Gemini AI...`,
+          `🧠 Generating NCERT-aligned questions using AI...`,
           `✅ Creating comprehensive quiz with explanations...`,
           `🎯 Finalizing quiz based on learning objectives...`
         ];
@@ -82,13 +82,13 @@ const LoadingPlaceholder = ({ contentType, grade, subject, topic }) => {
         return [
           `📖 Accessing NCERT Class ${grade} ${subject} textbook...`,
           `🔍 Locating "${topic}" content and examples...`,
-          `🧠 Processing content with Gemini AI...`,
+          `🧠 Processing content with AI...`,
           `📝 Generating detailed explanations...`,
           `✅ Preparing NCERT-aligned educational content...`
         ];
       default:
         return [
-          `🤖 Processing your request with Gemini AI...`,
+          `🤖 Processing your request with AI...`,
           `📚 Accessing NCERT database...`,
           `✨ Generating high-quality content...`
         ];
@@ -156,7 +156,7 @@ const LoadingPlaceholder = ({ contentType, grade, subject, topic }) => {
             <Brain className="h-6 w-6 text-purple-600 animate-pulse" />
             <div>
               <h4 className="font-semibold text-purple-800">AI Powered</h4>
-              <p className="text-sm text-purple-600">Using Gemini AI technology</p>
+              <p className="text-sm text-purple-600">Powered by OpenRouter models</p>
             </div>
           </div>
           
@@ -232,11 +232,7 @@ const ContentDisplay = ({ content, contentType }) => {
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
               ✅ NCERT Aligned
             </Badge>
-            {content.metadata?.aiService === 'gemini' && (
-              <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-                🧠 Gemini AI
-              </Badge>
-            )}
+            {/* AI service badge removed */}
           </div>
         </div>
 

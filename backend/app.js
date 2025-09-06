@@ -14,7 +14,7 @@ const translatorRoutes = require('./routes/translatorRoutes');
 const slideRoutes = require('./routes/slideRoutes');
 const mindmapRoutes = require('./routes/mindmapRoutes');
 const lecturePlanRoutes = require('./routes/lecturePlanRoutes');
-const geminiRoutes = require('./routes/geminiRoutes');
+//
 
 const app = express();
 
@@ -63,13 +63,13 @@ app.use('/api/translate', translatorRoutes);
 app.use('/api/slides', slideRoutes);
 app.use('/api/mindmap', mindmapRoutes);
 app.use('/api/lecture-plan', lecturePlanRoutes);
-app.use('/api/gemini', geminiRoutes);
+//
 
 // AI Service health check proxy
 app.get('/api/ai-health', async (req, res) => {
   try {
     const axios = require('axios');
-    const aiUrl = process.env.GEMINI_SERVICE_URL || process.env.AI_SERVICE_URL || 'http://localhost:8001';
+    const aiUrl = process.env.AI_SERVICE_URL || 'http://localhost:8001';
     const response = await axios.get(`${aiUrl.replace(/\/$/, '')}/health`, {
       timeout: 10000,
       headers: {

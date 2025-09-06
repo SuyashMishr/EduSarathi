@@ -48,31 +48,12 @@ const QuizGenerator = ({ onQuizGenerated, selectedTopic }) => {
 
       console.log('Sending quiz request:', requestData);
 
-      // Try Gemini API first
-      let response;
-      try {
-        response = await axios.post('/api/gemini/quiz/generate', requestData, {
-          timeout: 45000, // 45 second timeout
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        toast.success('Quiz generated successfully with Gemini AI!');
-      } catch (geminiError) {
-        console.warn('Gemini API failed:', geminiError.response?.data || geminiError.message);
-
-        // Show specific error message
-        if (geminiError.response?.status === 422) {
-          toast.error('Invalid quiz parameters. Please check your inputs.');
-        } else if (geminiError.response?.status === 500) {
-          toast.error('AI service error. Please try again.');
-        } else if (geminiError.code === 'ECONNABORTED') {
-          toast.error('Request timeout. Try reducing question count.');
-        } else {
-          toast.error('Failed to generate quiz. Please try again.');
-        }
-        throw geminiError;
-      }
+      // Call backend quiz API (OpenRouter-backed)
+      let response = await axios.post('/api/quiz/generate', requestData, {
+        timeout: 45000,
+        headers: { 'Content-Type': 'application/json' }
+      });
+      toast.success('Quiz generated successfully!');
 
       const quizData = response.data.data || response.data;
       setGeneratedQuiz(quizData);

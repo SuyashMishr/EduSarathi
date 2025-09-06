@@ -24,7 +24,7 @@ const QuizTestButton = () => {
     try {
       console.log('Testing quiz generation with data:', testData);
       
-      const response = await axios.post('/api/gemini/quiz/generate', testData, {
+  const response = await axios.post('/api/quiz/generate', testData, {
         timeout: 45000,
         headers: {
           'Content-Type': 'application/json'

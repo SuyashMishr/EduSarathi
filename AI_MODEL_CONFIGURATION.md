@@ -42,8 +42,8 @@ EduSarathi now uses specialized free AI models for different educational modules
 - **Max Tokens**: 3072
 
 ### 🔄 Content Generation & Translation
-- **Model**: `google/gemini-2.5-flash-image-preview:free`
-- **Reason**: Multilingual support and rich content generation with image understanding
+- **Model**: `google/gemma-2-9b-it:free`
+- **Reason**: Strong multilingual capability and efficient instruction tuning
 - **Temperature**: 0.5-0.7
 - **Max Tokens**: 1024-4096
 

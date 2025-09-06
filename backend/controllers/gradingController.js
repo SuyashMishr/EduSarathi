@@ -127,31 +127,23 @@ const gradeAnswerSheet = async (req, res) => {
       rubric: rubric || {}
     };
 
-    // Call Gemini AI grading service (primary)
+    // Call AI grading service (OpenRouter-backed)
     let aiResponse;
     try {
-      const geminiServiceUrl = process.env.GEMINI_SERVICE_URL || 'http://localhost:8001';
-      
-      // Prepare data for Gemini grading service
-      const geminiGradingData = {
+      const aiServiceUrl = process.env.AI_SERVICE_URL || 'http://localhost:8001';
+      aiResponse = await axios.post(`${aiServiceUrl}/grading/evaluate`, {
         question: answerSheet.quiz.questions[0]?.question || 'General question',
         student_answer: gradingData.extractedText || 'No answer provided',
         correct_answer: answerSheet.quiz.questions[0]?.correctAnswer || 'No correct answer available',
         subject: answerSheet.quiz.subject || 'general',
         grade: answerSheet.quiz.grade || 10,
         max_points: answerSheet.quiz.totalPoints || 10
-      };
-      
-      aiResponse = await axios.post(`${geminiServiceUrl}/grading/evaluate`, geminiGradingData, {
-        timeout: parseInt(process.env.GEMINI_SERVICE_TIMEOUT) || 60000
-      });
-    } catch (geminiError) {
-      logger.warn('Gemini grading service unavailable, falling back to legacy AI service:', geminiError.message);
-      
-      // Fallback to legacy AI service
-      aiResponse = await axios.post(`${process.env.AI_SERVICE_URL}/grading/grade`, gradingData, {
+      }, {
         timeout: parseInt(process.env.AI_SERVICE_TIMEOUT) || 60000
       });
+    } catch (aiError) {
+      logger.warn('AI grading service unavailable:', aiError.message);
+      throw aiError;
     }
 
     const gradingResults = aiResponse.data.success ? aiResponse.data.data : aiResponse.data;

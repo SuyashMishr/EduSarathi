@@ -16,7 +16,6 @@ class Config:
     OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
     OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
     GOOGLE_AI_API_KEY = os.getenv('GOOGLE_AI_API_KEY')
-    GEMINI_API_KEY = os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_AI_API_KEY')
     BHASHINI_API_KEY = os.getenv('BHASHINI_API_KEY')
     BHASHINI_USER_ID = os.getenv('BHASHINI_USER_ID')
     
@@ -115,11 +114,11 @@ MODEL_CONFIGS = {
         'description': 'Gemma 2 for accurate grading and assessment evaluation'
     },
     'content_generation': {
-        'model_name': 'google/gemini-2.5-flash-image-preview:free',  # Rich content with visual support
+        'model_name': 'meta-llama/llama-3.2-3b-instruct:free',  # Rich content generation
         'max_tokens': 4096,
         'temperature': 0.7,
         'top_p': 0.9,
-        'description': 'Gemini 2.5 Flash for content generation with image understanding'
+        'description': 'Llama 3.2 for content generation'
     },
     'slide_generation': {
         'model_name': 'openai/gpt-oss-120b:free',  # Creative presentation content
@@ -150,12 +149,12 @@ MODEL_CONFIGS = {
         'description': 'Gemma 2 for thorough answer assessment and feedback'
     },
     'translation': {
-        'model_name': 'google/gemini-2.5-flash-image-preview:free',  # Multilingual support
+        'model_name': 'google/gemma-2-9b-it:free',  # Multilingual support
         'max_tokens': 1024,
         'temperature': 0.5,
         'top_p': 0.9,
         'fallback_model': 'google-translate',
-        'description': 'Gemini 2.5 Flash for accurate translations'
+        'description': 'Gemma 2 for accurate translations'
     }
 }
 

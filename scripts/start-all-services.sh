@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Start All EduSarathi Services
-# This script starts the backend, frontend, and Gemini AI service
+# This script starts the backend, frontend, and AI service
 
 echo "🚀 Starting EduSarathi - Complete Educational Platform"
 echo "=================================================="
@@ -44,6 +44,20 @@ if [ ! -f ".env" ]; then
     echo "⚠️  Please update the .env file with your configuration"
 fi
 
+# Load .env and require OPENROUTER_API_KEY
+if [ -f ".env" ]; then
+    set -a
+    # shellcheck disable=SC1091
+    . .env
+    set +a
+fi
+
+if [ -z "${OPENROUTER_API_KEY:-}" ]; then
+    echo "❌ OPENROUTER_API_KEY is not set."
+    echo "   Set it in .env or export it in your shell, then re-run this script."
+    exit 1
+fi
+
 # Start MongoDB (if not running)
 echo "🗄️  Checking MongoDB..."
 if ! pgrep mongod > /dev/null; then
@@ -79,8 +93,6 @@ pip install -r requirements.txt
 cd ..
 
 # Set environment variables for AI service
-export GEMINI_API_KEY="AIzaSyBag4p-exEulPp3znM2A7MegvH3_FhCxxY"
-export GOOGLE_AI_API_KEY="AIzaSyBag4p-exEulPp3znM2A7MegvH3_FhCxxY"
 export ENVIRONMENT="development"
 
 # Start services
@@ -88,8 +100,8 @@ echo ""
 echo "🎯 Starting all services..."
 echo "=========================="
 
-# Start Gemini AI Service (Port 8001)
-start_service "Gemini-AI-Service" "cd ai && source venv/bin/activate && python api_service.py" 8001
+# Start AI Service (Port 8001)
+start_service "AI-Service" "cd ai && source venv/bin/activate && python api_service.py" 8001
 
 # Wait a moment for AI service to start
 sleep 3
@@ -108,12 +120,12 @@ echo "🎉 EduSarathi Services Started Successfully!"
 echo "============================================"
 echo "🌐 Frontend:     http://localhost:3000"
 echo "🔧 Backend API:  http://localhost:5000"
-echo "🤖 Gemini AI:    http://localhost:8001"
+echo "🤖 AI Service:   http://localhost:8001"
 echo "📚 AI API Docs:  http://localhost:8001/docs"
 echo ""
 echo "📊 Features Available:"
 echo "  ✅ NCERT-aligned content generation"
-echo "  ✅ Quiz generation with Gemini AI"
+echo "  ✅ Quiz generation via OpenRouter"
 echo "  ✅ Curriculum planning"
 echo "  ✅ Intelligent grading system"
 echo "  ✅ Multi-language support"
