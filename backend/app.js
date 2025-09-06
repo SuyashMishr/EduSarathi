@@ -84,6 +84,26 @@ app.get('/api/ai-health', async (req, res) => {
   }
 });
 
+// Orchestrated preflight: checks backend routes and AI connectivity
+app.get('/api/preflight', async (req, res) => {
+  const axios = require('axios');
+  const aiUrl = (process.env.AI_SERVICE_URL || 'http://localhost:8001').replace(/\/$/, '');
+  const results = {};
+  const tasks = [
+    { key: 'aiHealth', fn: () => axios.get(`${aiUrl}/health`, { timeout: 8000 }) },
+  ];
+  for (const t of tasks) {
+    try {
+      const r = await t.fn();
+      results[t.key] = { ok: true, data: r.data };
+    } catch (e) {
+      results[t.key] = { ok: false, error: e.message };
+    }
+  }
+  const ok = Object.values(results).every(r => r.ok);
+  res.status(ok ? 200 : 503).json({ success: ok, results });
+});
+
 // Static files
 app.use('/uploads', express.static('uploads'));
 

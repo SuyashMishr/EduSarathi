@@ -9,7 +9,7 @@ echo "================================="
 # Function to stop service by PID file
 stop_service_by_pid() {
     local service_name=$1
-    local pid_file="/tmp/edusarathi_${service_name,,}_pid"
+    local pid_file="/tmp/edusarathi_${service_name}_pid"
     
     if [ -f "$pid_file" ]; then
         local pid=$(cat "$pid_file")
@@ -43,15 +43,15 @@ stop_service_by_port() {
 }
 
 # Stop services by PID files first
-stop_service_by_pid "Frontend-Service"
-stop_service_by_pid "Backend-Service"
-stop_service_by_pid "AI-Service"
+stop_service_by_pid "frontend-service"
+stop_service_by_pid "backend-service"
+stop_service_by_pid "ai-service"
 
 # Stop services by ports as backup
 echo ""
 echo "🔍 Checking for remaining services on ports..."
 stop_service_by_port "Frontend" 3000
-stop_service_by_port "Backend" 5000
+stop_service_by_port "Backend" 5001
 stop_service_by_port "AI-Service" 8001
 
 # Stop any remaining Node.js processes related to the project

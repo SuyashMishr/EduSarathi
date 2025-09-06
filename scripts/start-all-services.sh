@@ -28,7 +28,7 @@ start_service() {
         eval "$command" &
         local pid=$!
         echo "✅ $service_name started (PID: $pid)"
-        echo $pid > "/tmp/edusarathi_${service_name,,}_pid"
+        echo $pid > "/tmp/edusarathi_${service_name}_pid"
     else
         echo "❌ Cannot start $service_name - port $port is busy"
     fi
@@ -101,25 +101,25 @@ echo "🎯 Starting all services..."
 echo "=========================="
 
 # Start AI Service (Port 8001)
-start_service "AI-Service" "cd ai && source venv/bin/activate && python api_service.py" 8001
+start_service "ai-service" "cd ai && source venv/bin/activate && python api_service.py" 8001
 
 # Wait a moment for AI service to start
 sleep 3
 
-# Start Backend Service (Port 5000)
-start_service "Backend-Service" "cd backend && npm start" 5000
+# Start Backend Service (Port 5001)
+start_service "backend-service" "cd backend && PORT=5001 npm start" 5001
 
 # Wait a moment for backend to start
 sleep 3
 
 # Start Frontend Service (Port 3000)
-start_service "Frontend-Service" "cd frontend && npm start" 3000
+start_service "frontend-service" "cd frontend && npm start" 3000
 
 echo ""
 echo "🎉 EduSarathi Services Started Successfully!"
 echo "============================================"
 echo "🌐 Frontend:     http://localhost:3000"
-echo "🔧 Backend API:  http://localhost:5000"
+echo "🔧 Backend API:  http://localhost:5001"
 echo "🤖 AI Service:   http://localhost:8001"
 echo "📚 AI API Docs:  http://localhost:8001/docs"
 echo ""
@@ -130,6 +130,15 @@ echo "  ✅ Curriculum planning"
 echo "  ✅ Intelligent grading system"
 echo "  ✅ Multi-language support"
 echo ""
+# Optional preflight smoke test
+if command -v node >/dev/null 2>&1; then
+    echo ""
+    echo "🧪 Running smoke tests (backend endpoints)..."
+    node scripts/smoke-test-backend.js || echo "⚠️  Smoke tests reported failures. Check logs; fallbacks may still serve responses."
+else
+    echo "ℹ️  Node is not available for smoke tests. Skipping."
+fi
+
 echo "🛑 To stop all services, run: ./scripts/stop-all-services.sh"
 echo "📝 Logs are available in the respective service directories"
 echo ""

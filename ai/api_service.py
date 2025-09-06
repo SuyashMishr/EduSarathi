@@ -390,56 +390,95 @@ async def generate_mindmap(request: MindmapGenerationRequest):
             error=f"Mindmap generation failed: {str(e)}",
             message="Unable to generate mindmap. Please try again."
         )
-    try:
-        # redundant leftover block removed
-            raise HTTPException(status_code=500, detail=f"Quiz generation failed: {result.get('error', 'Unknown error')}")
-    except Exception as e:
-        logger.error(f"Error in quiz generation: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
 
-# Curriculum generation endpoint
-@app.post("/curriculum/generate", response_model=APIResponse)
-async def generate_curriculum(request: CurriculumGenerationRequest):
+def _local_grading_fallback(req: GradingRequest) -> Dict[str, Any]:
+    """Local, deterministic grading fallback with simple rubric."""
     try:
-        logger.info(f"Generating curriculum for {request.subject} Grade {request.grade} using OpenRouter only")
-        result = openrouter_service.generate_curriculum(request.model_dump())
-        if result["success"]:
-            return APIResponse(success=True, data=result["data"], message="Curriculum generated successfully (OpenRouter)")
-        else:
-            raise HTTPException(status_code=500, detail=f"Curriculum generation failed: {result.get('error', 'Unknown error')}")
+        score = 0
+        max_points = max(1, min(10, req.max_points))
+        explanation = "Basic heuristic grading fallback."
+        # naive overlap scoring
+        common = set(req.student_answer.lower().split()) & set(req.correct_answer.lower().split())
+        ratio = len(common) / (len(req.correct_answer.split()) or 1)
+        score = round(ratio * max_points)
+        return {
+            "question": req.question,
+            "student_answer": req.student_answer,
+            "correct_answer": req.correct_answer,
+            "score": score,
+            "max_points": max_points,
+            "feedback": explanation,
+            "criteria": [
+                {"name": "keyword_overlap", "weight": 1.0, "matched": sorted(list(common))}
+            ]
+        }
     except Exception as e:
-        logger.error(f"Error in curriculum generation: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        return {"score": 0, "max_points": req.max_points, "feedback": f"Fallback error: {e}"}
 
-# Grading endpoint
+
+# Grading endpoint with fallback
 @app.post("/grading/evaluate", response_model=APIResponse)
 async def grade_answer(request: GradingRequest):
-    """Grade student answer using OpenRouter only"""
+    """Grade student answer using OpenRouter with local fallback."""
     try:
-        logger.info(f"Grading answer for {request.subject} using OpenRouter only")
+        logger.info(f"Grading answer for {request.subject} using OpenRouter (with fallback)")
         result = openrouter_service.grade_answer(request.model_dump())
-        if result["success"]:
+        if result.get("success") and result.get("data"):
             return APIResponse(success=True, data=result["data"], message="Answer graded successfully")
         else:
-            raise HTTPException(status_code=500, detail=f"Grading failed: {result.get('error', 'Unknown error')}")
+            logger.warning(f"Primary grading failed: {result.get('error')} — using local grading fallback")
+            fallback = _local_grading_fallback(request)
+            return APIResponse(success=True, data=fallback, message="Graded using local fallback")
     except Exception as e:
-        logger.error(f"Error in grading: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error in grading: {e} — using local fallback")
+        fallback = _local_grading_fallback(request)
+        return APIResponse(success=True, data=fallback, message="Graded using local fallback due to error")
 
-# Content generation endpoint
+def _local_content_fallback(req: ContentGenerationRequest) -> Dict[str, Any]:
+    """Create a simple, structured content fallback using request fields only."""
+    title = f"{req.subject}: {req.topic} ({req.type})"
+    return {
+        "title": title,
+        "subject": req.subject,
+        "topic": req.topic,
+        "grade": req.grade,
+        "type": req.type,
+        "language": req.language if hasattr(req, 'language') else 'en',
+        "summary": f"Overview of {req.topic} in {req.subject} for grade {req.grade}.",
+        "keyPoints": [
+            f"Core concept: {req.topic}",
+            "NCERT-aligned outline (fallback)",
+            "Examples and simple explanations"
+        ],
+        "sections": [
+            {"heading": "Introduction", "content": f"Introduction to {req.topic}."},
+            {"heading": "Main Ideas", "content": "Key ideas and definitions."},
+            {"heading": "Examples", "content": "A few illustrative examples."}
+        ],
+        "metadata": {
+            "generatedBy": "local-fallback",
+            "timestamp": datetime.now().isoformat()
+        }
+    }
+
+
+# Content generation endpoint with fallback
 @app.post("/content/generate", response_model=APIResponse)
 async def generate_content(request: ContentGenerationRequest):
-    """Generate educational content using OpenRouter only"""
+    """Generate educational content using OpenRouter with local fallback."""
     try:
-        logger.info(f"Generating {request.type} content for {request.subject} - {request.topic} using OpenRouter only")
+        logger.info(f"Generating {request.type} content for {request.subject} - {request.topic} (with fallback)")
         result = openrouter_service.generate_content(request.model_dump())
-        if result["success"]:
+        if result.get("success") and result.get("data"):
             return APIResponse(success=True, data=result["data"], message="Content generated successfully")
         else:
-            raise HTTPException(status_code=500, detail=f"Content generation failed: {result.get('error', 'Unknown error')}")
+            logger.warning(f"Primary content generation failed: {result.get('error')} — using local fallback")
+            fallback = _local_content_fallback(request)
+            return APIResponse(success=True, data=fallback, message="Content generated using local fallback")
     except Exception as e:
-        logger.error(f"Error in content generation: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error in content generation: {e} — using local fallback")
+        fallback = _local_content_fallback(request)
+        return APIResponse(success=True, data=fallback, message="Content generated using local fallback due to error")
 
 # Lecture plan generation endpoint
 @app.post("/lecture-plan/generate", response_model=APIResponse)

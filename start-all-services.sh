@@ -77,7 +77,7 @@ echo "🔧 Starting Backend Service (Port 5001)..."
 if check_port 5001; then
     cd backend
     npm install >/dev/null 2>&1
-    npm start &
+    PORT=5001 npm start &
     BACKEND_PID=$!
     echo "✅ Backend Service started (PID: $BACKEND_PID)"
     cd ..
