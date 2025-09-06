@@ -18,6 +18,7 @@ class EnhancedSlideGenerator:
     def __init__(self, api_key: Optional[str] = None):
         """Initialize the enhanced slide generator"""
         self.openrouter = OpenRouterService(api_key)
+        self.model_name = "openai/gpt-oss-120b:free"  # Specific model for slide generation
         
         # Load slide templates and themes
         self.templates = self._load_slide_templates()
@@ -299,7 +300,7 @@ Return ONLY a valid JSON object in this exact format:
             {"role": "user", "content": user_prompt}
         ]
         
-        return self.openrouter._make_sync_request(messages, temperature=0.7, max_tokens=4000)
+        return self.openrouter._request_with_fallback(messages, temperature=0.7, max_tokens=4000, model_override=self.model_name)
     
     def _parse_and_enhance_slides(self, content: str, subject: str, topic: str, 
                                 grade: Optional[int], theme: str, difficulty: str, 

@@ -9,8 +9,9 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 import os
 import random
+from pathlib import Path
 from openrouter_service import OpenRouterService
-from pdf_extractor import PDFExtractor
+from pdf_extractor import NCERTPDFExtractor as PDFExtractor
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,11 @@ class EnhancedQuizGenerator:
     def __init__(self, api_key: Optional[str] = None):
         """Initialize the enhanced quiz generator"""
         self.openrouter = OpenRouterService(api_key)
-        self.pdf_extractor = PDFExtractor()
+        self.model_name = "deepseek/deepseek-chat-v3.1:free"  # Specific model for quiz generation
+        
+        # Initialize PDF extractor with data directory
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+        self.pdf_extractor = PDFExtractor(data_dir) if os.path.exists(data_dir) else None
         
         # Load NCERT context and curriculum data
         self.ncert_context = self._load_ncert_context()
@@ -90,7 +95,7 @@ class EnhancedQuizGenerator:
                     "success": True,
                     "data": quiz_data,
                     "generated_at": datetime.now().isoformat(),
-                    "model": "claude-3.5-sonnet",
+                    "model": self.model_name,
                     "enhanced_features": {
                         "pdf_context_used": bool(pdf_context),
                         "ncert_aligned": True,
@@ -129,7 +134,8 @@ class EnhancedQuizGenerator:
                                 topic.lower() in file.lower()
                             ):
                                 pdf_path = os.path.join(root, file)
-                                content = self.pdf_extractor.extract_text(pdf_path)
+                                # Use correct extractor API
+                                content = self.pdf_extractor.extract_text_from_pdf(Path(pdf_path)) if self.pdf_extractor else ""
                                 if content and len(content) > 100:
                                     # Return relevant excerpt (first 2000 chars)
                                     return content[:2000] + "..."
@@ -276,7 +282,7 @@ Return ONLY a valid JSON object in this exact format:
             {"role": "user", "content": user_prompt}
         ]
         
-        return self.openrouter._make_sync_request(messages, temperature=0.8, max_tokens=4000)
+        return self.openrouter._request_with_fallback(messages, temperature=0.8, max_tokens=4000, model_override=self.model_name)
     
     def _parse_and_enhance_quiz(self, content: str, subject: str, topic: str, 
                               grade: Optional[int], difficulty: str, language: str) -> Dict:
