@@ -119,29 +119,82 @@ class EnhancedQuizGenerator:
             }
     
     def _extract_relevant_pdf_context(self, subject: str, topic: str, grade: Optional[int]) -> str:
-        """Extract relevant content from PDF files"""
+        """Extract relevant content from PDF files with improved search"""
         try:
-            # Look for relevant PDFs in the data directory
-            pdf_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+            data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+            if not os.path.exists(data_dir) or not self.pdf_extractor:
+                return ""
+            
+            # Build search paths based on grade and subject
+            search_paths = []
             if grade:
-                class_dir = os.path.join(pdf_dir, f'Class_{grade}th')
+                class_dir = os.path.join(data_dir, f'Class_{grade}th')
                 if os.path.exists(class_dir):
-                    # Find PDFs related to the subject/topic
-                    for root, dirs, files in os.walk(class_dir):
-                        for file in files:
-                            if file.endswith('.pdf') and (
-                                subject.lower() in file.lower() or 
-                                topic.lower() in file.lower()
-                            ):
-                                pdf_path = os.path.join(root, file)
-                                # Use correct extractor API
-                                content = self.pdf_extractor.extract_text_from_pdf(Path(pdf_path)) if self.pdf_extractor else ""
-                                if content and len(content) > 100:
-                                    # Return relevant excerpt (first 2000 chars)
-                                    return content[:2000] + "..."
+                    search_paths.append(class_dir)
+            
+            # Also search NCERT directory
+            ncert_dir = os.path.join(data_dir, 'ncert')
+            if os.path.exists(ncert_dir):
+                search_paths.append(ncert_dir)
+            
+            # Find PDFs related to the subject
+            relevant_pdfs = []
+            for search_path in search_paths:
+                for root, dirs, files in os.walk(search_path):
+                    for file in files:
+                        if file.endswith('.pdf'):
+                            file_lower = file.lower()
+                            root_lower = root.lower()
+                            # Check if subject matches directory or filename
+                            if (subject.lower() in file_lower or 
+                                subject.lower() in root_lower or
+                                any(subject_word in file_lower for subject_word in subject.lower().split()) or
+                                any(subject_word in root_lower for subject_word in subject.lower().split())):
+                                relevant_pdfs.append(os.path.join(root, file))
+            
+            # Extract content from most relevant PDFs
+            extracted_content = []
+            topic_keywords = topic.lower().split()
+            
+            for pdf_file in relevant_pdfs[:2]:  # Limit to 2 files
+                try:
+                    content = self.pdf_extractor.extract_text_from_pdf(Path(pdf_file))
+                    if content and len(content) > 200:
+                        # Find topic-relevant sections
+                        lines = content.split('\n')
+                        relevant_sections = []
+                        
+                        for i, line in enumerate(lines):
+                            line_lower = line.lower()
+                            # Check if line contains topic keywords
+                            if any(keyword in line_lower for keyword in topic_keywords):
+                                # Extract surrounding context (5 lines before and after)
+                                start_idx = max(0, i - 5)
+                                end_idx = min(len(lines), i + 6)
+                                section = '\n'.join(lines[start_idx:end_idx])
+                                relevant_sections.append(section)
+                                
+                                # Limit total extracted content
+                                if len(relevant_sections) >= 3:
+                                    break
+                        
+                        if relevant_sections:
+                            extracted_content.extend(relevant_sections)
+                        elif len(extracted_content) == 0:
+                            # If no topic-specific content found, take first 1000 characters
+                            extracted_content.append(content[:1000])
+                            
+                except Exception as e:
+                    logger.warning(f"Error processing {pdf_file}: {e}")
+                    continue
+            
+            # Combine and return limited content
+            result = '\n\n---\n\n'.join(extracted_content)
+            return result[:2000] if result else ""  # Limit to 2000 characters
+            
         except Exception as e:
             logger.warning(f"PDF context extraction failed: {e}")
-        return ""
+            return ""
     
     def _get_curriculum_context(self, subject: str, grade: Optional[int]) -> str:
         """Get relevant curriculum context from NCERT data"""
@@ -200,81 +253,60 @@ Create quizzes that are:
 5. Include advanced explanations and teaching insights"""
 
         # Create detailed user prompt
-        user_prompt = f"""Create an exceptional {difficulty} level quiz on "{topic}" in {subject}{grade_text}.
+        # Create comprehensive user prompt with context
+        context_info = ""
+        if pdf_context:
+            context_info += f"\n\nRELEVANT TEXTBOOK CONTENT:\n{pdf_context[:1000]}"
+        if curriculum_context:
+            context_info += f"\n\nCURRICULUM GUIDELINES:\n{curriculum_context}"
+            
+        user_prompt = f"""Create {question_count} excellent quiz questions about "{topic}" for {subject} Grade {grade or 10}.
 
-CONTEXT INFORMATION:
-{curriculum_context if curriculum_context else "Standard NCERT curriculum alignment required"}
-
-{f'ADDITIONAL REFERENCE MATERIAL: {pdf_context[:1000]}' if pdf_context else ''}
-
-QUIZ SPECIFICATIONS:
-- Subject: {subject}
-- Topic: {topic}
-- Grade Level: {grade if grade else 'General'}
-- Number of Questions: {question_count}
-- Difficulty: {difficulty}
-- Question Types: {', '.join(question_types)}
+CONTENT REQUIREMENTS:
+- Types: {', '.join(question_types)}
+- Difficulty: {difficulty} level
 - Language: {lang_text}
+- Must align with NCERT curriculum{context_info}
 
-ENHANCED REQUIREMENTS:
-1. Each question must test deep understanding, not memorization
-2. Include real-world applications and practical examples
-3. Questions should build from basic concepts to advanced applications
-4. Provide comprehensive explanations that teach concepts
-5. Include references to NCERT textbook chapters where relevant
-6. For numerical problems, include step-by-step solutions
-7. Cultural context should be relevant to Indian students
-8. Include questions that test critical thinking and analysis
+Create diverse, engaging questions that test understanding, not just memory. Include:
+- Real-world applications relevant to Indian students
+- Clear explanations for all answers
+- Proper difficulty progression
+- Cultural context when appropriate
 
-QUESTION TYPE GUIDELINES:
-- MCQ: 4 options with exactly one correct answer, distractors should be plausible
-- True/False: Include explanations for both correct and incorrect options
-- Short Answer: Provide model answers with key points and marking scheme
-- Numerical: Include formula, step-by-step solution, and common mistakes to avoid
+Respond with ONLY this JSON structure:
 
-QUALITY STANDARDS (Must exceed ChatGPT):
-- Deeper conceptual understanding
-- Better real-world connections
-- More comprehensive explanations
-- Superior pedagogical structure
-- Enhanced educational value
-
-Return ONLY a valid JSON object in this exact format:
 {{
-    "title": "Comprehensive Quiz: {topic}",
-    "subject": "{subject}",
-    "topic": "{topic}",
-    "grade": {grade if grade else 10},
-    "difficulty": "{difficulty}",
-    "description": "NCERT-aligned comprehensive assessment on {topic}",
-    "timeLimit": {question_count * 3},
-    "totalPoints": {question_count * 3},
-    "language": "{language}",
-    "instructions": "Read each question carefully. Show all work for numerical problems. Choose the best answer for multiple choice questions.",
-    "questions": [
-        {{
-            "id": 1,
-            "question": "Question text with clear language",
-            "type": "mcq|true_false|short_answer|numerical",
-            "options": ["Option A", "Option B", "Option C", "Option D"],
-            "correctAnswer": "Correct option or answer",
-            "points": 3,
-            "explanation": "Detailed explanation including why this answer is correct and why others are wrong",
-            "difficulty": "easy|medium|hard",
-            "bloomsTaxonomy": "remember|understand|apply|analyze|evaluate|create",
-            "ncertChapter": "Chapter reference if applicable",
-            "realWorldApplication": "How this concept applies in real life",
-            "commonMistakes": "Common errors students make with this concept"
-        }}
-    ],
-    "tags": ["{subject.lower()}", "{topic.lower()}", "grade-{grade}", "{difficulty}"],
-    "metadata": {{
-        "createdAt": "{datetime.now().isoformat()}",
-        "ncertAligned": true,
-        "aiModel": "claude-3.5-sonnet",
-        "qualityLevel": "superior-to-chatgpt",
-        "contextUsed": {{'pdf': {bool(pdf_context)}, 'curriculum': {bool(curriculum_context)}}}
+  "title": "Quiz: {topic}",
+  "subject": "{subject}",
+  "topic": "{topic}",
+  "grade": {grade or 10},
+  "difficulty": "{difficulty}",
+  "description": "Assessment on {topic} for Grade {grade or 10} students",
+  "timeLimit": {question_count * 3},
+  "totalPoints": {question_count * 3},
+  "language": "{language}",
+  "instructions": "Answer all questions carefully. Show work for calculations.",
+  "questions": [
+    {{
+      "id": 1,
+      "question": "Your question text here",
+      "type": "mcq",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correctAnswer": "Option A",
+      "points": 3,
+      "explanation": "Detailed explanation here",
+      "difficulty": "{difficulty}",
+      "bloomsTaxonomy": "understand",
+      "realWorldApplication": "How this applies in real life"
     }}
+  ],
+  "tags": ["{subject.lower()}", "{topic.lower()}", "grade-{grade or 10}"],
+  "metadata": {{
+    "ncertAligned": true,
+    "aiModel": "enhanced-openrouter",
+    "contextUsed": {{"pdf": {bool(pdf_context)}, "curriculum": {bool(curriculum_context)}}}
+  }}
 }}"""
 
         messages = [
@@ -396,51 +428,85 @@ Return ONLY a valid JSON object in this exact format:
     
     def _extract_questions_from_text(self, content: str) -> List[Dict]:
         """Extract questions from text content as fallback"""
-        # Simple extraction logic - in real implementation, this would be more sophisticated
         questions = []
         
-        # Split content into potential questions
-        lines = content.split('\n')
-        current_question = None
+        # Try to parse PDF content for creating contextual questions
+        pdf_context = self._extract_relevant_pdf_context("Mathematics", "Polynomials", 10)  # Default fallback
         
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-                
-            # Look for question patterns
-            if any(marker in line.lower() for marker in ['question', 'q.', 'q:']):
-                if current_question:
-                    questions.append(current_question)
-                
-                current_question = {
-                    "id": len(questions) + 1,
-                    "question": line,
+        # Create topic-based questions using PDF content
+        if pdf_context and len(pdf_context) > 100:
+            # Extract key concepts from PDF content
+            key_concepts = self._extract_key_concepts_from_pdf(pdf_context)
+            
+            for i, concept in enumerate(key_concepts[:3], 1):  # Limit to 3 questions
+                questions.append({
+                    "id": i,
+                    "question": f"Explain the concept of {concept} based on the curriculum.",
                     "type": "short_answer",
-                    "correctAnswer": "Sample answer",
-                    "points": 3,
-                    "explanation": "Answer explanation",
+                    "correctAnswer": f"{concept} is an important topic in the curriculum with specific properties and applications.",
+                    "points": 5,
+                    "explanation": f"Understanding {concept} is essential for mastering the subject.",
                     "difficulty": "medium",
-                    "bloomsTaxonomy": "understand"
-                }
+                    "bloomsTaxonomy": "understand",
+                    "ncertChapter": "Relevant NCERT chapter",
+                    "realWorldApplication": f"{concept} has practical applications in various fields."
+                })
         
-        if current_question:
-            questions.append(current_question)
-        
-        # If no questions found, create a default one
+        # If no questions from PDF, create default questions
         if not questions:
-            questions = [{
-                "id": 1,
-                "question": f"Explain the key concepts of {self.topic}",
-                "type": "short_answer",
-                "correctAnswer": "Key concepts explanation",
-                "points": 10,
-                "explanation": "This question tests understanding of the main topic",
-                "difficulty": "medium",
-                "bloomsTaxonomy": "understand"
-            }]
+            questions = [
+                {
+                    "id": 1,
+                    "question": "What are the fundamental concepts covered in this topic?",
+                    "type": "short_answer",
+                    "correctAnswer": "The fundamental concepts include key definitions, properties, and applications as per NCERT curriculum.",
+                    "points": 5,
+                    "explanation": "This question tests basic understanding of the topic.",
+                    "difficulty": "medium",
+                    "bloomsTaxonomy": "understand",
+                    "ncertChapter": "Relevant chapter",
+                    "realWorldApplication": "These concepts have practical applications."
+                },
+                {
+                    "id": 2,
+                    "question": "How do you apply these concepts to solve problems?",
+                    "type": "short_answer", 
+                    "correctAnswer": "Apply the concepts by following systematic steps and using appropriate formulas or methods.",
+                    "points": 5,
+                    "explanation": "This tests the application of knowledge.",
+                    "difficulty": "medium",
+                    "bloomsTaxonomy": "apply",
+                    "ncertChapter": "Relevant chapter",
+                    "realWorldApplication": "Problem-solving skills are essential in real-world scenarios."
+                }
+            ]
         
         return questions
+    
+    def _extract_key_concepts_from_pdf(self, pdf_content: str) -> List[str]:
+        """Extract key concepts from PDF content"""
+        concepts = []
+        
+        # Look for capitalized terms and mathematical concepts
+        lines = pdf_content.split('\n')
+        for line in lines:
+            line = line.strip()
+            if line and len(line) > 5:
+                # Extract terms that might be concepts (simple heuristic)
+                words = line.split()
+                for word in words:
+                    if (word.istitle() and len(word) > 4 and 
+                        word not in ['The', 'This', 'That', 'When', 'Where', 'What']):
+                        if word not in concepts:
+                            concepts.append(word)
+                            
+                # Look for mathematical terms
+                math_terms = ['polynomial', 'equation', 'function', 'graph', 'theorem', 'formula']
+                for term in math_terms:
+                    if term.lower() in line.lower() and term.title() not in concepts:
+                        concepts.append(term.title())
+        
+        return concepts[:5]  # Return top 5 concepts
 
     def generate_subject_specific_quiz(self, subject: str, topics: List[str], 
                                      grade: int, difficulty: str = "medium", 

@@ -147,19 +147,17 @@ async def generate_quiz(request: QuizGenerationRequest):
     try:
         logger.info(f"Generating enhanced quiz for {request.subject} - {request.topic} (Grade {request.grade})")
         
-        # Use enhanced OpenRouter service for superior content generation
-        quiz_data = openrouter_service.generate_quiz({
-            'subject': request.subject,
-            'topic': request.topic,
-            'grade': request.grade,
-            'questionCount': request.questionCount,
-            'difficulty': request.difficulty,
-            'questionTypes': request.questionTypes,
-            'language': request.language,
-            'enhanced_mode': True,
-            'ncert_alignment': True,
-            'superior_quality': True
-        })
+        # Use enhanced quiz generator for superior content generation
+        quiz_data = enhanced_quiz_generator.generate_quiz(
+            subject=request.subject,
+            topic=request.topic,
+            grade=request.grade,
+            question_count=request.questionCount,
+            difficulty=request.difficulty,
+            question_types=request.questionTypes,
+            language=request.language,
+            include_pdfs=True
+        )
         
         if quiz_data.get('success'):
             return APIResponse(
@@ -198,17 +196,16 @@ async def generate_curriculum(request: CurriculumGenerationRequest):
     try:
         logger.info(f"Generating enhanced curriculum for {request.subject} - Grade {request.grade}")
         
-        # Use enhanced OpenRouter service for superior curriculum design
-        curriculum_data = openrouter_service.generate_curriculum({
-            'subject': request.subject,
-            'grade': request.grade,
-            'duration': request.duration,
-            'focus_areas': request.focus_areas or [],
-            'enhanced_features': True,
-            'pedagogical_design': True,
-            'ncert_alignment': True,
-            'comprehensive_assessment': True
-        })
+        # Use enhanced curriculum generator for superior curriculum design
+        curriculum_data = enhanced_curriculum_generator.generate_curriculum(
+            subject=request.subject,
+            grade=request.grade,
+            duration=request.duration,
+            focus_areas=request.focus_areas or [],
+            difficulty="grade_appropriate",
+            language="en",
+            include_assessments=True
+        )
         
         if curriculum_data.get('success'):
             return APIResponse(
@@ -246,20 +243,17 @@ async def generate_lecture_plan(request: LecturePlanGenerationRequest):
     try:
         logger.info(f"Generating enhanced lecture plan for {request.subject} - {request.topic}")
         
-        # Use enhanced OpenRouter service for superior lecture planning
-        lecture_plan_data = openrouter_service.generate_lecture_plan({
-            'subject': request.subject,
-            'topic': request.topic,
-            'grade': request.grade,
-            'duration': request.duration,
-            'learning_objectives': request.learningObjectives,
-            'difficulty': request.difficulty,
-            'teaching_strategies': request.teachingStrategies,
-            'language': request.language,
-            'enhanced_pedagogy': True,
-            '5e_model': True,
-            'assessment_integration': True
-        })
+        # Use enhanced lecture plan generator for superior lecture planning
+        lecture_plan_data = enhanced_lecture_plan_generator.generate_lecture_plan(
+            subject=request.subject,
+            topic=request.topic,
+            grade=request.grade,
+            duration=request.duration,
+            learning_objectives=request.learningObjectives,
+            difficulty=request.difficulty,
+            teaching_strategies=request.teachingStrategies,
+            language=request.language
+        )
         
         if lecture_plan_data.get('success'):
             return APIResponse(
@@ -297,21 +291,18 @@ async def generate_slides(request: SlideGenerationRequest):
     try:
         logger.info(f"Generating enhanced slides for {request.subject} - {request.topic}")
         
-        # Use enhanced OpenRouter service for superior slide generation
-        slides_data = openrouter_service.generate_slides({
-            'subject': request.subject,
-            'topic': request.topic,
-            'grade': request.grade,
-            'slide_count': request.slideCount,
-            'theme': request.theme,
-            'template': request.template,
-            'difficulty': request.difficulty,
-            'language': request.language,
-            'include_images': request.includeImages,
-            'professional_design': True,
-            'interactive_elements': True,
-            'accessibility_features': True
-        })
+        # Use enhanced slide generator for superior slide generation
+        slides_data = enhanced_slide_generator.generate_slides(
+            subject=request.subject,
+            topic=request.topic,
+            grade=request.grade,
+            slide_count=request.slideCount,
+            theme=request.theme,
+            template=request.template,
+            difficulty=request.difficulty,
+            language=request.language,
+            include_images=request.includeImages
+        )
         
         if slides_data.get('success'):
             return APIResponse(
@@ -349,18 +340,14 @@ async def generate_mindmap(request: MindmapGenerationRequest):
     try:
         logger.info(f"Generating enhanced mindmap for {request.subject} - {request.topic}")
         
-        # Use enhanced OpenRouter service for superior mindmap generation
-        mindmap_data = openrouter_service.generate_mindmap({
-            'subject': request.subject,
-            'topic': request.topic,
-            'grade': request.grade,
-            'mindmap_type': request.mindmapType,
-            'language': request.language,
-            'hierarchical_structure': True,
-            'cross_connections': True,
-            'visual_elements': True,
-            'collaborative_features': True
-        })
+        # Use enhanced mindmap generator for superior mindmap generation
+        mindmap_data = enhanced_mindmap_generator.generate_mindmap(
+            subject=request.subject,
+            topic=request.topic,
+            grade=request.grade,
+            mindmap_type=request.mindmapType,
+            language=request.language
+        )
         
         if mindmap_data.get('success'):
             return APIResponse(
@@ -419,10 +406,15 @@ def _local_grading_fallback(req: GradingRequest) -> Dict[str, Any]:
 # Grading endpoint with fallback
 @app.post("/grading/evaluate", response_model=APIResponse)
 async def grade_answer(request: GradingRequest):
-    """Grade student answer using OpenRouter with local fallback."""
+    """Grade student answer using enhanced assessment module with local fallback."""
     try:
-        logger.info(f"Grading answer for {request.subject} using OpenRouter (with fallback)")
-        result = openrouter_service.grade_answer(request.model_dump())
+        logger.info(f"Grading answer for {request.subject} using enhanced assessment")
+        
+        # Use enhanced answer assessment module
+        result = enhanced_answer_assessment.assess_answer_sheet(
+            answer_sheet_content=f"Subject: {request.subject}\nQuestion: {request.question}\nStudent Answer: {request.studentAnswer}\nCorrect Answer: {request.correctAnswer}"
+        )
+        
         if result.get("success") and result.get("data"):
             return APIResponse(success=True, data=result["data"], message="Answer graded successfully")
         else:

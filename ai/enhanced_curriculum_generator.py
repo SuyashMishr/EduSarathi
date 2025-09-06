@@ -8,7 +8,9 @@ import logging
 from typing import Dict, List, Optional, Any
 from datetime import datetime
 import os
+from pathlib import Path
 from openrouter_service import OpenRouterService
+from pdf_extractor import NCERTPDFExtractor as PDFExtractor
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +21,10 @@ class EnhancedCurriculumGenerator:
         """Initialize the enhanced curriculum generator"""
         self.openrouter = OpenRouterService(api_key)
         self.model_name = "meta-llama/llama-3.2-3b-instruct:free"  # Specific model for curriculum generation
+        
+        # Initialize PDF extractor with data directory
+        data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+        self.pdf_extractor = PDFExtractor(data_dir) if os.path.exists(data_dir) else None
         
         # Load curriculum frameworks and standards
         self.frameworks = self._load_curriculum_frameworks()
@@ -105,10 +111,13 @@ class EnhancedCurriculumGenerator:
         """
         
         try:
+            # Extract PDF context if available
+            pdf_context = self._extract_curriculum_pdf_context(subject, grade)
+            
             # Generate curriculum using OpenRouter
             curriculum_response = self._generate_with_openrouter(
                 subject, grade, duration, focus_areas or [], 
-                learning_objectives or [], difficulty, language, include_assessments
+                learning_objectives or [], difficulty, language, include_assessments, pdf_context
             )
             
             if curriculum_response.get("success"):
@@ -145,9 +154,90 @@ class EnhancedCurriculumGenerator:
                 "data": None
             }
     
+    def _extract_curriculum_pdf_context(self, subject: str, grade: int) -> str:
+        """Extract relevant curriculum content from PDF files"""
+        try:
+            if not self.pdf_extractor:
+                return ""
+                
+            data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+            if not os.path.exists(data_dir):
+                return ""
+            
+            # Look for curriculum PDFs and subject-specific content
+            curriculum_content = []
+            
+            # Check CBSE curriculum documents
+            curriculum_paths = [
+                os.path.join(data_dir, f'Class_{grade}th', 'CBSE_Curriculum'),
+                os.path.join(data_dir, 'Class_11th', 'CBSE_Curriculum'),  # Fallback
+                os.path.join(data_dir, 'ncert')
+            ]
+            
+            for path in curriculum_paths:
+                if os.path.exists(path):
+                    for root, dirs, files in os.walk(path):
+                        for file in files:
+                            if file.endswith('.pdf') and 'curriculum' in file.lower():
+                                pdf_path = os.path.join(root, file)
+                                try:
+                                    content = self.pdf_extractor.extract_text_from_pdf(Path(pdf_path))
+                                    if content and len(content) > 100:
+                                        # Look for subject-specific sections
+                                        lines = content.split('\n')
+                                        relevant_lines = []
+                                        for i, line in enumerate(lines):
+                                            if subject.lower() in line.lower():
+                                                # Include context around subject mentions
+                                                start = max(0, i - 3)
+                                                end = min(len(lines), i + 10)
+                                                relevant_lines.extend(lines[start:end])
+                                                if len(relevant_lines) > 20:  # Limit content
+                                                    break
+                                        
+                                        if relevant_lines:
+                                            curriculum_content.append('\n'.join(relevant_lines))
+                                except Exception as e:
+                                    logger.warning(f"Error processing {pdf_path}: {e}")
+                                    continue
+            
+            # Also check subject-specific textbooks
+            subject_paths = [
+                os.path.join(data_dir, f'Class_{grade}th', 'English_books', subject),
+                os.path.join(data_dir, f'Class_{grade}th', 'Hindi_books', subject)
+            ]
+            
+            for path in subject_paths:
+                if os.path.exists(path):
+                    pdf_files = [f for f in os.listdir(path) if f.endswith('.pdf')]
+                    for pdf_file in pdf_files[:1]:  # Just first file to avoid token limits
+                        try:
+                            content = self.pdf_extractor.extract_text_from_pdf(Path(os.path.join(path, pdf_file)))
+                            if content:
+                                # Extract table of contents or chapter headings
+                                lines = content.split('\n')
+                                toc_content = []
+                                for line in lines[:50]:  # First 50 lines likely contain TOC
+                                    if any(keyword in line.lower() for keyword in ['chapter', 'unit', 'lesson', 'contents']):
+                                        toc_content.append(line.strip())
+                                if toc_content:
+                                    curriculum_content.append('\n'.join(toc_content))
+                                break
+                        except Exception as e:
+                            logger.warning(f"Error processing {pdf_file}: {e}")
+                            continue
+            
+            # Combine and limit content
+            result = '\n\n---\n\n'.join(curriculum_content)
+            return result[:1500] if result else ""  # Limit to 1500 characters
+            
+        except Exception as e:
+            logger.warning(f"Curriculum PDF extraction failed: {e}")
+            return ""
+
     def _generate_with_openrouter(self, subject: str, grade: int, duration: str,
                                 focus_areas: List[str], learning_objectives: List[str],
-                                difficulty: str, language: str, include_assessments: bool) -> Dict:
+                                difficulty: str, language: str, include_assessments: bool, pdf_context: str = "") -> Dict:
         """Generate curriculum using OpenRouter Claude 3.5 Sonnet with enhanced prompts"""
         
         lang_text = "Hindi" if language == "hi" else "English"
@@ -189,6 +279,9 @@ CURRICULUM SPECIFICATIONS:
 SUBJECT STANDARDS (NCERT):
 {f'Key Strands: {", ".join(subject_standards.get("strands", []))}' if subject_standards.get("strands") else ''}
 {f'Essential Skills: {", ".join(subject_standards.get("skills", []))}' if subject_standards.get("skills") else ''}
+
+CURRICULUM CONTEXT FROM PDFs:
+{pdf_context if pdf_context else 'No PDF context available - use standard NCERT guidelines'}
 
 ENHANCED REQUIREMENTS (Must exceed ChatGPT quality):
 1. Perfect alignment with NCERT curriculum framework

@@ -50,6 +50,24 @@ const generateQuiz = async (req, res) => {
 
     const generatedQuiz = aiResponse.data.success ? aiResponse.data.data : aiResponse.data;
 
+    // Process questions to ensure MongoDB compatibility
+    const processedQuestions = (generatedQuiz.questions || []).map(question => {
+      // Remove the 'id' field if it exists (MongoDB will generate _id automatically)
+      const { id, ...processedQuestion } = question;
+      
+      // Ensure required fields are present
+      return {
+        type: processedQuestion.type || 'mcq',
+        question: processedQuestion.question || 'Sample question',
+        options: processedQuestion.options || [],
+        correctAnswer: processedQuestion.correctAnswer || '',
+        explanation: processedQuestion.explanation || '',
+        points: processedQuestion.points || 1,
+        difficulty: processedQuestion.difficulty || difficulty,
+        tags: processedQuestion.tags || []
+      };
+    });
+
     // Create quiz in database
     const quiz = new Quiz({
       title: generatedQuiz.title || `${topic} Quiz`,
@@ -57,7 +75,7 @@ const generateQuiz = async (req, res) => {
       subject,
       topic,
       grade,
-      questions: generatedQuiz.questions || [],
+      questions: processedQuestions,
       settings: {
         timeLimit,
         attemptsAllowed: 1,

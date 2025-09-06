@@ -731,7 +731,7 @@ Always provide responses that exceed ChatGPT quality through:
         """Generate superior mindmap fallback"""
         return self._generate_mindmap_fallback_superior(
             subject="Physics", topic="Motion and Force", grade="11",
-            depth_level=3, layout="hierarchical"
+            depth_level=3, objectives=["Understand motion", "Learn force concepts", "Apply Newton's laws"]
         )
     
     def _generate_superior_lecture_fallback(self) -> str:
